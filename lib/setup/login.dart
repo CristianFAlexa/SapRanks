@@ -1,4 +1,4 @@
-import 'package:bored/pages/home.dart';
+import 'package:bored/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   String _email, _password;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -26,29 +25,25 @@ class _LoginPageState extends State<LoginPage> {
         key: _formKey,
         child: Column(
           children: <Widget>[
-              TextFormField(
-                // ignore: missing_return
-                validator:  (input) {
-                  if(input.isEmpty){
-                    return 'Email required!';
-                  }
-                },
-                onSaved: (input) => _email = input,
-                decoration: InputDecoration(
-                  labelText: 'Email'
-                ),
-              ),
             TextFormField(
               // ignore: missing_return
-              validator:  (input) {
-                if(input.length < 8){
+              validator: (input) {
+                if (input.isEmpty) {
+                  return 'Email required!';
+                }
+              },
+              onSaved: (input) => _email = input,
+              decoration: InputDecoration(labelText: 'Email'),
+            ),
+            TextFormField(
+              // ignore: missing_return
+              validator: (input) {
+                if (input.length < 8) {
                   return 'Password required!';
                 }
               },
               onSaved: (input) => _password = input,
-              decoration: InputDecoration(
-                  labelText: 'Password'
-              ),
+              decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             RaisedButton(
@@ -62,19 +57,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> signIn() async {
-    final _formState  = _formKey.currentState;
-    if(_formState.validate()){
+    final _formState = _formKey.currentState;
+    if (_formState.validate()) {
       _formState.save();
-      try{
-        FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _email,
-            password: _password
-        )).user;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-      }catch(e) {
-          print(e);
-      }
+      try {
+        FirebaseUser user = (await FirebaseAuth.instance
+                .signInWithEmailAndPassword(email: _email, password: _password))
+            .user;
 
+
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home(user: user)));
+      } catch (e) {
+        print(e);
+      }
     }
   }
 }
