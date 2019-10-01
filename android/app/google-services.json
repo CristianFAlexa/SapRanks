@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "369445369062",
+    "firebase_url": "https://msap-656db.firebaseio.com",
+    "project_id": "msap-656db",
+    "storage_bucket": "msap-656db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369445369062:android:9228150716e177c65f3727",
+        "android_client_info": {
+          "package_name": "com.sap.bored"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369445369062-btnoo2kkjdnk44d2bsnpqfsl7oekiqle.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNU2buK7iSo7K8pV4Uu2IEKbSRYH1Fmbc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369445369062-btnoo2kkjdnk44d2bsnpqfsl7oekiqle.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369445369062:android:3f4749561f15ca085f3727",
+        "android_client_info": {
+          "package_name": "com.sap.septica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369445369062-btnoo2kkjdnk44d2bsnpqfsl7oekiqle.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNU2buK7iSo7K8pV4Uu2IEKbSRYH1Fmbc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369445369062-btnoo2kkjdnk44d2bsnpqfsl7oekiqle.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
