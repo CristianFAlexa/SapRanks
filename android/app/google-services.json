@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "369445369062-jq7uudkab9kum4vi0ueird7r1oh0ie3j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sap.bored",
+            "certificate_hash": "7239f81a94f07157f63c73d231c641c1f48768c4"
+          }
+        },
+        {
           "client_id": "369445369062-btnoo2kkjdnk44d2bsnpqfsl7oekiqle.apps.googleusercontent.com",
           "client_type": 3
         }

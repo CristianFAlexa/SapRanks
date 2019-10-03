@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Home extends StatelessWidget {
   const Home({Key key, this.user}) : super(key: key);
@@ -8,9 +10,26 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GoogleSignIn _gSignIn = GoogleSignIn();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home ${user.email}'),
+        //title: Text('Home ${user.email}'),
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              FontAwesomeIcons.signOutAlt,
+              size: 20.0,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              _gSignIn.signOut();
+              print('Signed out.');
+              Navigator.pop(context);
+            },
+          )
+        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: Firestore.instance
