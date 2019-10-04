@@ -30,9 +30,8 @@ class _WelcomeState extends State<Welcome> {
     // todo: why doesn't it persist in fb
     final FirebaseUser user =
         (await firebaseAuth.signInWithCredential(credential)).user;
-    await db.collection('users')
-        .document(user.uid)
-        .setData( new UserModel(user.uid, user.email, 'newbie', 'user_role').toJson());
+    await db.collection('users').document(user.uid).setData(
+        new UserModel(user.uid, user.email, 'newbie', 'user_role').toJson());
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => Home(user: user)));
     //return user;
@@ -107,8 +106,8 @@ class _WelcomeState extends State<Welcome> {
                   ),
                   RaisedButton(
                     onPressed: () => _signWithGoogle(context),
-                        //.then((FirebaseUser user) => print(user))
-                       // .catchError((e) => print(e)),
+                    //.then((FirebaseUser user) => print(user))
+                    // .catchError((e) => print(e)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),

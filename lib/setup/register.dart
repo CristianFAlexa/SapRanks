@@ -3,6 +3,7 @@ import 'package:bored/setup/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 final db = Firestore.instance;
 
@@ -25,9 +26,17 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          //title: Text(widget.title),
-          ),
+      appBar: GradientAppBar(
+        gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              // Color.fromRGBO(255, 90, 0, 1),
+              Colors.deepOrange,
+              Color.fromRGBO(255, 173, 52, 1),
+            ]),
+        //title: Text(widget.title),
+      ),
       body: Form(
         key: _formKey,
         child: Column(
@@ -86,9 +95,9 @@ class _RegisterState extends State<Register> {
             .user;
         user.sendEmailVerification();
 
-        await db.collection('users')
-        .document(user.uid)
-        .setData( new UserModel(user.uid, user.email, 'newbie', 'user_role').toJson());
+        await db.collection('users').document(user.uid).setData(
+            new UserModel(user.uid, user.email, 'newbie', 'user_role')
+                .toJson());
 
         Navigator.pushReplacement(
             context,
