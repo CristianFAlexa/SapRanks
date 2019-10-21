@@ -20,131 +20,140 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: GradientAppBar(
-        gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              // Color.fromRGBO(255, 90, 0, 1),
-              Colors.deepOrange,
-              Color.fromRGBO(255, 173, 52, 1),
-            ]),
-        title: Text(widget.title),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 32),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width / 1.2,
-                    height: 50,
-                    padding:
-                        EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 2)
-                        ]),
-                    child: TextFormField(
-                      // ignore: missing_return
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return 'Email required!';
-                        }
-                      },
-                      onSaved: (input) => _email = input,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.mail), hintText: 'Email'),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 32),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width / 1.2,
-                          height: 50,
-                          padding:
-                          EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(50)),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 2)
-                              ]),
-                          child:  TextFormField(
-                            // ignore: missing_return
-                            validator: (input) {
-                              if (input.length < 8) {
-                                return 'Password required!';
-                              }
-                            },
-                            onSaved: (input) => _password = input,
-                            decoration: InputDecoration(
-                                icon: Icon(FontAwesomeIcons.key), hintText: 'Password'),
-                            obscureText: true,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-   /*         TextFormField(
-              // ignore: missing_return
-              validator: (input) {
-                if (input.isEmpty) {
-                  return 'Email required!';
-                }
-              },
-              onSaved: (input) => _email = input,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextFormField(
-              // ignore: missing_return
-              validator: (input) {
-                if (input.length < 8) {
-                  return 'Password required!';
-                }
-              },
-              onSaved: (input) => _password = input,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),*/
-            RaisedButton(
-              onPressed: signIn,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              color: Colors.white,
-              child: new Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    FontAwesomeIcons.doorOpen,
-                    color: Colors.deepOrange,
-                  ),
-                  new Container(
-                      padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                      child: new Text(
-                        "Sign in",
-                        style: TextStyle(
-                            color: Colors.deepOrange,
-                            fontWeight: FontWeight.bold),
-                      )),
-                ],
-              ),
-            )
-          ],
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/images/login.jpg",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
         ),
-      ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: GradientAppBar(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black87, Colors.black38, Colors.black12]),
+            title: Text(widget.title),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black87,
+                      Colors.black54,
+                      Colors.black45,
+                      Colors.black26,
+                      Colors.black12,
+                      Colors.black26,
+                      Colors.black45,
+                      Colors.black54,
+                      Colors.black87,
+                    ]
+                )
+            ),
+            child: Center(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 32),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            height: 50,
+                            padding:
+                            EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(color: Colors.black, blurRadius: 2)
+                                ]),
+                            child: TextFormField(
+                              // ignore: missing_return
+                              validator: (input) {
+                                if (input.isEmpty) {
+                                  return 'Email required!';
+                                }
+                              },
+                              onSaved: (input) => _email = input,
+                              decoration: InputDecoration(
+                                  icon: Icon(Icons.mail), hintText: 'Email'),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: 32),
+                            child: Column(
+                              children: <Widget>[
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 1.2,
+                                  height: 50,
+                                  padding:
+                                  EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(color: Colors.black, blurRadius: 2)
+                                      ]),
+                                  child:  TextFormField(
+                                    // ignore: missing_return
+                                    validator: (input) {
+                                      if (input.length < 8) {
+                                        return 'Password required!';
+                                      }
+                                    },
+                                    onSaved: (input) => _password = input,
+                                    decoration: InputDecoration(
+                                        icon: Icon(FontAwesomeIcons.key), hintText: 'Password'),
+                                    obscureText: true,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                    RaisedButton(
+                      onPressed: signIn,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      color: Colors.red,
+                      child: new Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            FontAwesomeIcons.signInAlt,
+                            color: Colors.white,
+                          ),
+                          new Container(
+                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                              child: new Text(
+                                "Sign in",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -154,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
       _formState.save();
       try {
         FirebaseUser user = (await FirebaseAuth.instance
-                .signInWithEmailAndPassword(email: _email, password: _password))
+            .signInWithEmailAndPassword(email: _email, password: _password))
             .user;
 
         Navigator.push(
