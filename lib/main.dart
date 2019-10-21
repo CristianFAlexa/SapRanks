@@ -14,8 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Sap ranks.',
       theme: ThemeData(
         fontFamily: 'RobotoMono',
-        // primarySwatch: Colors.blue,
-        primaryColor: Color.fromRGBO(255, 140, 0, 1),
+        primaryColor: Colors.blueGrey[900],
       ),
       home: Welcome(),
     );
