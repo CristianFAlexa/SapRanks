@@ -5,7 +5,8 @@ import 'package:bored/view/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -27,14 +28,29 @@ class _WelcomeState extends State<Welcome> {
         await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-    // todo: why doesn't it persist in fb
     final FirebaseUser user =
         (await firebaseAuth.signInWithCredential(credential)).user;
-    await db.collection('users').document(user.uid).setData(
-        new UserModel(user.uid, user.email, 'newbie', 'user_role').toJson());
+
+    final userDocument = db.collection('users').document(user.uid);
+    userDocument.get().then((snapshot) async => {
+          // ignore: sdk_version_ui_as_code
+          if (!snapshot.exists)
+            {
+              await userDocument.setData(new UserModel(
+                      user.uid,
+                      user.email,
+                      'newbie',
+                      'user_role',
+                      null,
+                      user.email.substring(0, 3),
+                      0,
+                      0,
+                      0)
+                  .toJson())
+            }
+        });
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => Home(user: user)));
-    //return user;
   }
 
   @override
@@ -44,11 +60,17 @@ class _WelcomeState extends State<Welcome> {
         builder: (context) => Stack(
           children: <Widget>[
             new Container(
-              decoration: new BoxDecoration(
-                image: new DecorationImage(
-                  image: new AssetImage("assets/images/pingpong.jpg"),
-                  fit: BoxFit.cover,
-                ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.blueGrey[800],
+                      Colors.blueGrey[700],
+                      Colors.blueGrey[600],
+                      Colors.blueGrey[700],
+                      Colors.blueGrey[800],
+                    ]),
               ),
             ),
             new Center(
@@ -56,80 +78,20 @@ class _WelcomeState extends State<Welcome> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
+                  SignInButton(Buttons.Google, onPressed: () => _signWithGoogle(context)),
+                  SignInButtonBuilder(
+                    text: 'Sign in with Email',
+                    icon: Icons.email,
                     onPressed: toLogin,
-                    color: const Color(0xFFFFFFFF),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          FontAwesomeIcons.mailBulk,
-                          color: Colors.deepOrange,
-                        ),
-                        new Container(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: new Text(
-                              "Sign in",
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                      ],
-                    ),
+                    backgroundColor: Colors.blueGrey[900],
                   ),
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
+                  SizedBox(height: 200,),
+                  SignInButtonBuilder(
+                    text: 'Register now',
+                    icon: Icons.person_add,
                     onPressed: toRegister,
-                    color: const Color(0xFFFFFFFF),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          FontAwesomeIcons.user,
-                          color: Colors.deepOrange,
-                        ),
-                        new Container(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: new Text(
-                              "Sign up",
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                      ],
-                    ),
+                    backgroundColor: Colors.green,
                   ),
-                  RaisedButton(
-                    onPressed: () => _signWithGoogle(context),
-                    //.then((FirebaseUser user) => print(user))
-                    // .catchError((e) => print(e)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    color: const Color(0xFFFFFFFF),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          FontAwesomeIcons.google,
-                          color: Colors.deepOrange,
-                        ),
-                        new Container(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: new Text(
-                              "Sign in with Google",
-                              style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                      ],
-                    ),
-                  )
                 ],
               ),
             )
