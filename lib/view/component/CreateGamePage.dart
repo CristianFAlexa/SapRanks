@@ -21,6 +21,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
   String _name;
   String _downloadUrl;
   File _image;
+  int _minPlayers;
+  int _maxPlayers;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -48,7 +50,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
       var uid = Uuid().v4();
       Firestore.instance
           .collection('games').document('$uid')
-          .setData(GameModel(_name, 0, _downloadUrl, uid).toMap());
+          .setData(GameModel(_name, 0, _downloadUrl, uid, _minPlayers, _maxPlayers).toMap());
     } else {
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new Text('You did not choose a picture and a name.')));
@@ -93,6 +95,56 @@ class _CreateGamePageState extends State<CreateGamePage> {
                         decoration: InputDecoration(
                             icon: Icon(Icons.gamepad),
                             hintText: 'Choose a name'),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 50,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black, blurRadius: 2)
+                          ]),
+                      child: TextFormField(
+                        // ignore: missing_return
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'Minimum required!';
+                          }
+                        },
+                        onSaved: (input) => _minPlayers = input as int,
+                        decoration: InputDecoration(
+                            icon: Icon(FontAwesomeIcons.minus),
+                            hintText: 'Choose min # of players'),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      height: 50,
+                      padding: EdgeInsets.only(
+                          top: 4, left: 16, right: 16, bottom: 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black, blurRadius: 2)
+                          ]),
+                      child: TextFormField(
+                        // ignore: missing_return
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return 'Maximum required!';
+                          }
+                        },
+                        onSaved: (input) => _maxPlayers = input as int,
+                        decoration: InputDecoration(
+                            icon: Icon(FontAwesomeIcons.plus),
+                            hintText: 'Choose max # of players'),
                       ),
                     ),
                   ],
