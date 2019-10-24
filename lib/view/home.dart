@@ -16,6 +16,7 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'component/ChallengePage.dart';
 import 'component/CreateGamePage.dart';
 import 'component/EditGamePage.dart';
+import 'component/PlayGamePage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key, this.user}) : super(key: key);
@@ -292,7 +293,8 @@ class _HomeState extends State<Home> {
                                                       .copyWith(
                                                           color: Colors.white,
                                                           fontWeight:
-                                                              FontWeight.bold),
+                                                              FontWeight.bold,
+                                                  backgroundColor: Colors.black26),
                                                 ),
                                                 (_editGameState)
                                                     ? Row(
@@ -350,7 +352,8 @@ class _HomeState extends State<Home> {
                                                                   Colors.white,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                          backgroundColor: Colors.black26),
                                                     ),
                                                   ],
                                                 ),
@@ -401,7 +404,7 @@ class _HomeState extends State<Home> {
                                                   )
                                                 : RaisedButton(
                                                     onPressed: () {
-                                                      // onPlayGame(context,user.uid,gameItems[index].uid);
+                                                      toPlayGame(context, user);
                                                     },
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -459,6 +462,13 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+}
+void toPlayGame(BuildContext context, FirebaseUser user){
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => PlayGamePage(user: user),
+          fullscreenDialog: true));
 }
 
 void toProfile(BuildContext context, FirebaseUser user) {
