@@ -93,7 +93,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child: StreamBuilder(
               stream: collectionReference.document(user.uid).snapshots(),
               builder: (context, snapshot) {
-                return Builder(
+                return (snapshot.data == null)? Text("Loading..") : Builder(
                   builder: (context) => Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,

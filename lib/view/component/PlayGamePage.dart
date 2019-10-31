@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bored/service/DatabaseService.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +27,8 @@ class _PlayGamePageState extends State<PlayGamePage> {
   var swatch = Stopwatch();
   String timeDisplay = "00:00:00";
 
-  void startTimer() {
-    Timer(duration, isDone);
+  Timer startTimer() {
+    return Timer(duration, isDone);
   }
 
   void isDone() {
@@ -68,38 +67,41 @@ class _PlayGamePageState extends State<PlayGamePage> {
             .map((item) => StreamBuilder(
                   stream: collectionReference.document(item).snapshots(),
                   builder: (context, snapshot) {
-                    return Padding(
+                    return (snapshot.data == null)? Text("Loading..") : Padding(
                       padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                       child: Material(
                         color: Colors.transparent,
                         child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 100,
-                              ),
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: (snapshot
-                                                    .data['profile_picture'] ==
-                                                null)
-                                            ? AssetImage(
-                                                "assets/images/default-profile-picture.png")
-                                            : NetworkImage(snapshot
-                                                .data['profile_picture']))),
-                              ),
-                              Text(
-                                "${snapshot.data['name']}",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15.0),
-                              ),
-                            ],
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 100,
+                                ),
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: (snapshot.data[
+                                                      'profile_picture'] ==
+                                                  null)
+                                              ? AssetImage(
+                                                  "assets/images/default-profile-picture.png")
+                                              : NetworkImage(snapshot
+                                                  .data['profile_picture']))),
+                                ),
+                                Text(
+                                  "${snapshot.data['name']}",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12.0),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -114,7 +116,7 @@ class _PlayGamePageState extends State<PlayGamePage> {
     return StreamBuilder(
         stream: queueCollectionReference.document(gameName).snapshots(),
         builder: (context, snapshot) {
-          return Scaffold(
+          return (snapshot.data == null)? Text("Loading..") : Scaffold(
             appBar: GradientAppBar(
               title: Center(
                 child: Text("Queue"),
@@ -152,9 +154,7 @@ class _PlayGamePageState extends State<PlayGamePage> {
                           backgroundColor: Colors.black12),
                     ),
                   ),
-                  Center(
-                    child: getTextWidgets(snapshot.data['players']),
-                  ),
+                  getTextWidgets(snapshot.data['players']),
                   SizedBox(
                     height: 20,
                   ),

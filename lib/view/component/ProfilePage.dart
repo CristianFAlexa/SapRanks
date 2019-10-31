@@ -104,6 +104,9 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    if(userModel==null)
+      return Text("Loading");
     // win rate rule - todo: make a class of static object rules
     _winRate = ((userModel.disputeWin) / (userModel.disputeWin + userModel.disputeLoss)) * 100;
     // level rule

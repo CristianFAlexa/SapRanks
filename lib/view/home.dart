@@ -153,57 +153,60 @@ class _HomeState extends State<Home> {
           StreamBuilder(
               stream: collectionReference.document(user.uid).snapshots(),
               builder: (context, snapshot) {
-                return Container(
-                    child: Row(
-                  children: <Widget>[
-                    (snapshot.data['role'] == "admin")
-                        ? IconButton(
+                return (snapshot.data == null)
+                    ? Text("Loading..")
+                    : Container(
+                        child: Row(
+                        children: <Widget>[
+                          (snapshot.data['role'] == "admin")
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.games,
+                                    size: 20.0,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () =>
+                                      setEditGameState(_editGameState),
+                                )
+                              : SizedBox(),
+                          IconButton(
                             icon: Icon(
-                              Icons.games,
+                              FontAwesomeIcons.solidPlayCircle,
                               size: 20.0,
                               color: Colors.white,
                             ),
-                            onPressed: () => setEditGameState(_editGameState),
-                          )
-                        : SizedBox(),
-                    IconButton(
-                      icon: Icon(
-                        FontAwesomeIcons.solidPlayCircle,
-                        size: 20.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => toChallenge(context),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        FontAwesomeIcons.userAlt,
-                        size: 20.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => toProfile(context, user),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.settings,
-                        size: 20.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: toSettings,
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        FontAwesomeIcons.signOutAlt,
-                        size: 20.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        _gSignIn.signOut();
-                        print('Signed out.');
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ));
+                            onPressed: () => toChallenge(context),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.userAlt,
+                              size: 20.0,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => toProfile(context, user),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.settings,
+                              size: 20.0,
+                              color: Colors.white,
+                            ),
+                            onPressed: toSettings,
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.signOutAlt,
+                              size: 20.0,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              _gSignIn.signOut();
+                              print('Signed out.');
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ));
               }),
         ],
       ),
@@ -232,6 +235,7 @@ class _HomeState extends State<Home> {
                     backgroundColor: Colors.blueGrey[900],
                   )
                 : SizedBox(),
+            (usersEnrolment==null)? Text("Loading"):
             Expanded(
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -240,8 +244,6 @@ class _HomeState extends State<Home> {
                   itemCount: gameItems.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-//                        onTap: () {}, // todo: add on tap
-//                        onDoubleTap: () {},
                       child: Stack(
                         children: <Widget>[
                           Padding(
@@ -294,7 +296,8 @@ class _HomeState extends State<Home> {
                                                           color: Colors.white,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                  backgroundColor: Colors.black26),
+                                                          backgroundColor:
+                                                              Colors.black26),
                                                 ),
                                                 (_editGameState)
                                                     ? Row(
@@ -353,7 +356,9 @@ class _HomeState extends State<Home> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                          backgroundColor: Colors.black26),
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .black26),
                                                     ),
                                                   ],
                                                 ),
@@ -405,15 +410,33 @@ class _HomeState extends State<Home> {
                                                 : RaisedButton(
                                                     onPressed: () {
                                                       List<String> players;
-                                                      queueCollectionReference.document(gameItems[index].name).get().then((snap) {
+                                                      queueCollectionReference
+                                                          .document(
+                                                              gameItems[index]
+                                                                  .name)
+                                                          .get()
+                                                          .then((snap) {
                                                         setState(() {
-                                                          players = new List<String>.from(snap.data['players']);
+                                                          players = new List<
+                                                                  String>.from(
+                                                              snap.data[
+                                                                  'players']);
                                                           players.add(user.uid);
                                                         });
                                                         queueCollectionReference
-                                                            .document(gameItems[index].name)
-                                                            .updateData({'players': FieldValue.arrayUnion(players)});
-                                                        toPlayGame(context, user, gameItems[index].name);
+                                                            .document(
+                                                                gameItems[index]
+                                                                    .name)
+                                                            .updateData({
+                                                          'players': FieldValue
+                                                              .arrayUnion(
+                                                                  players)
+                                                        });
+                                                        toPlayGame(
+                                                            context,
+                                                            user,
+                                                            gameItems[index]
+                                                                .name);
                                                       });
                                                     },
                                                     shape:
@@ -473,6 +496,7 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
 void toPlayGame(BuildContext context, FirebaseUser user, String gameName) {
   Navigator.push(
       context,
