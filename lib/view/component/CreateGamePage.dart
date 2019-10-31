@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:bored/model/GameModel.dart';
+import 'package:bored/model/QueueModel.dart';
+import 'package:bored/service/DatabaseService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,8 +23,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
   String _name;
   String _downloadUrl;
   File _image;
-  int _minPlayers;
-  int _maxPlayers;
+  String _minPlayers;
+  String _maxPlayers;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -50,7 +52,11 @@ class _CreateGamePageState extends State<CreateGamePage> {
       var uid = Uuid().v4();
       Firestore.instance
           .collection('games').document('$uid')
-          .setData(GameModel(_name, 0, _downloadUrl, uid, _minPlayers, _maxPlayers).toMap());
+          .setData(GameModel(_name, 0, _downloadUrl, uid, int.parse(_minPlayers),  int.parse(_maxPlayers)).toMap());
+      // creating a queue for later use
+      queueCollectionReference.document(_name)
+          .setData(QueueModel(new Timestamp.now(),  new List<String>(), int.parse(_minPlayers), int.parse(_maxPlayers)).toMap());
+      Navigator.of(context).pop();
     } else {
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new Text('You did not choose a picture and a name.')));
@@ -116,7 +122,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                             return 'Minimum required!';
                           }
                         },
-                        onSaved: (input) => _minPlayers = input as int,
+                        onSaved: (input) => _minPlayers = input,
                         decoration: InputDecoration(
                             icon: Icon(FontAwesomeIcons.minus),
                             hintText: 'Choose min # of players'),
@@ -141,7 +147,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                             return 'Maximum required!';
                           }
                         },
-                        onSaved: (input) => _maxPlayers = input as int,
+                        onSaved: (input) => _maxPlayers = input,
                         decoration: InputDecoration(
                             icon: Icon(FontAwesomeIcons.plus),
                             hintText: 'Choose max # of players'),
