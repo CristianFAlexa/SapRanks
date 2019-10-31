@@ -404,7 +404,17 @@ class _HomeState extends State<Home> {
                                                   )
                                                 : RaisedButton(
                                                     onPressed: () {
-                                                      toPlayGame(context, user);
+                                                      List<String> players;
+                                                      queueCollectionReference.document(gameItems[index].name).get().then((snap) {
+                                                        setState(() {
+                                                          players = new List<String>.from(snap.data['players']);
+                                                          players.add(user.uid);
+                                                        });
+                                                        queueCollectionReference
+                                                            .document(gameItems[index].name)
+                                                            .updateData({'players': FieldValue.arrayUnion(players)});
+                                                        toPlayGame(context, user, gameItems[index].name);
+                                                      });
                                                     },
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -463,11 +473,11 @@ class _HomeState extends State<Home> {
     );
   }
 }
-void toPlayGame(BuildContext context, FirebaseUser user){
+void toPlayGame(BuildContext context, FirebaseUser user, String gameName) {
   Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => PlayGamePage(user: user),
+          builder: (context) => PlayGamePage(user: user, gameName: gameName),
           fullscreenDialog: true));
 }
 
