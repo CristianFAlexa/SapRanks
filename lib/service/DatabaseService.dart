@@ -9,10 +9,13 @@ final CollectionReference gamesCollectionReference =
     Firestore.instance.collection('games');
 
 final CollectionReference gamesEnrolmentCollectionReference =
-Firestore.instance.collection('games_enrolment');
+    Firestore.instance.collection('games_enrolment');
 
 final CollectionReference usersEnrolmentCollectionReference =
-Firestore.instance.collection('users_enrolment');
+    Firestore.instance.collection('users_enrolment');
+
+final CollectionReference queueCollectionReference =
+    Firestore.instance.collection('queue');
 
 class DatabaseService {
   Future<FirebaseUser> getFirebaseUser() async {
@@ -63,7 +66,8 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot> getGamesEnrolmentList({int offset, int limit}) {
-    Stream<QuerySnapshot> snapshots = gamesEnrolmentCollectionReference.snapshots();
+    Stream<QuerySnapshot> snapshots =
+        gamesEnrolmentCollectionReference.snapshots();
     if (offset != null) {
       snapshots = snapshots.skip(offset);
     }
@@ -74,7 +78,8 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot> getUsersEnrolmentList({int offset, int limit}) {
-    Stream<QuerySnapshot> snapshots = usersEnrolmentCollectionReference.snapshots();
+    Stream<QuerySnapshot> snapshots =
+        usersEnrolmentCollectionReference.snapshots();
     if (offset != null) {
       snapshots = snapshots.skip(offset);
     }
