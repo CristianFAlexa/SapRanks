@@ -133,7 +133,10 @@ class _HomeState extends State<Home> {
 
     usersEnrolmentCollectionReference.document(user.uid).get().then((snap) {
       setState(() {
-        usersEnrolment = new List<String>.from(snap.data['game_id']);
+        if (snap.data != null)
+          usersEnrolment = new List<String>.from(snap.data['game_id']);
+        else
+          usersEnrolment = new List<String>();
       });
     });
   }
@@ -235,7 +238,6 @@ class _HomeState extends State<Home> {
                     backgroundColor: Colors.blueGrey[900],
                   )
                 : SizedBox(),
-            (usersEnrolment==null)? Text("Loading"):
             Expanded(
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -364,8 +366,9 @@ class _HomeState extends State<Home> {
                                                 ),
                                               ],
                                             ),
-                                            (!usersEnrolment.contains(
-                                                    gameItems[index].uid))
+                                            (usersEnrolment == null ||
+                                                    !usersEnrolment.contains(
+                                                        gameItems[index].uid))
                                                 ? RaisedButton(
                                                     onPressed: () {
                                                       onPlayGame(
