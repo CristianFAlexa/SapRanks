@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bored/model/GameModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/component/ProfilePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,13 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
-import 'component/ChallengePage.dart';
 import 'component/CreateGamePage.dart';
 import 'component/EditGamePage.dart';
-import 'component/PlayGamePage.dart';
+import 'component/GamePage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key, this.user}) : super(key: key);
@@ -54,7 +51,7 @@ class _HomeState extends State<Home> {
     return subscription;
   }
 
-  onPlayGame(BuildContext context, String userId, String gameId) {
+  void onPlayGame(BuildContext context, String userId, String gameId) {
     // todo : figure out games enrolment shit
 //    await gamesEnrolmentCollectionReference.document(gameId).get().then((snap) async {
 //      setState(() {
@@ -72,7 +69,7 @@ class _HomeState extends State<Home> {
         .setData({'game_id': FieldValue.arrayUnion(usersEnrolment)});
   }
 
-  showDeleteDialog(BuildContext context, DocumentReference gameReference) {
+  void showDeleteDialog(BuildContext context, DocumentReference gameReference) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -80,17 +77,18 @@ class _HomeState extends State<Home> {
           return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(20.0)), // RoundedRectangleBorder,
+                      BorderRadius.circular(10)), // RoundedRectangleBorder,
               title: Text(
                 "Are you sure that you want to delete this game?",
                 style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
               actions: <Widget>[
                 FlatButton(
                   child: Text(
                     "Delete",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold,
+                    color: Colors.red),
                   ),
                   onPressed: () => {deleteGame(context, gameReference)},
                 )
@@ -104,8 +102,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future deleteGame(
-      BuildContext context, DocumentReference gameReference) async {
+  Future deleteGame(BuildContext context, DocumentReference gameReference) async {
     await Firestore.instance.runTransaction((Transaction myTransaction) async {
       await myTransaction.delete(gameReference);
     });
@@ -143,7 +140,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final GoogleSignIn _gSignIn = GoogleSignIn();
 
     return Scaffold(
       appBar: GradientAppBar(
@@ -151,7 +147,7 @@ class _HomeState extends State<Home> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Colors.black87, Colors.black38, Colors.black12]),
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         actions: <Widget>[
           StreamBuilder(
               stream: collectionReference.document(user.uid).snapshots(),
@@ -172,42 +168,6 @@ class _HomeState extends State<Home> {
                                       setEditGameState(_editGameState),
                                 )
                               : SizedBox(),
-                          IconButton(
-                            icon: Icon(
-                              FontAwesomeIcons.solidPlayCircle,
-                              size: 20.0,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => toChallenge(context),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              FontAwesomeIcons.userAlt,
-                              size: 20.0,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => toProfile(context, user),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.settings,
-                              size: 20.0,
-                              color: Colors.white,
-                            ),
-                            onPressed: toSettings,
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              FontAwesomeIcons.signOutAlt,
-                              size: 20.0,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              _gSignIn.signOut();
-                              print('Signed out.');
-                              Navigator.pop(context);
-                            },
-                          ),
                         ],
                       ));
               }),
@@ -252,7 +212,7 @@ class _HomeState extends State<Home> {
                             padding: EdgeInsets.only(left: 8.0, right: 8.0),
                             child: Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 175.0,
+                              height: 250,
                               child: Padding(
                                 padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                                 child: Material(
@@ -276,7 +236,7 @@ class _HomeState extends State<Home> {
                                       image: DecorationImage(
                                         fit: BoxFit.fill,
                                         image: NetworkImage(
-                                            gameItems[index].picture),
+                                            snaps[index].data['picture']),
                                       ),
                                     ),
                                     child: Center(
@@ -290,7 +250,7 @@ class _HomeState extends State<Home> {
                                                       .spaceBetween,
                                               children: <Widget>[
                                                 Text(
-                                                  "${gameItems[index].name}",
+                                                  "${snaps[index].data['name']}",
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .display1
@@ -343,38 +303,17 @@ class _HomeState extends State<Home> {
                                                         ],
                                                       )
                                                     : SizedBox(),
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      "${gameItems[index].players}",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .display1
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .black26),
-                                                    ),
-                                                  ],
-                                                ),
                                               ],
                                             ),
                                             (usersEnrolment == null ||
                                                     !usersEnrolment.contains(
-                                                        gameItems[index].uid))
+                                                        snaps[index].data['uid']))
                                                 ? RaisedButton(
                                                     onPressed: () {
                                                       onPlayGame(
                                                           context,
                                                           user.uid,
-                                                          gameItems[index].uid);
+                                                          snaps[index].data['uid']);
                                                     },
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -412,35 +351,10 @@ class _HomeState extends State<Home> {
                                                   )
                                                 : RaisedButton(
                                                     onPressed: () {
-                                                      List<String> players;
-                                                      queueCollectionReference
-                                                          .document(
-                                                              gameItems[index]
-                                                                  .name)
-                                                          .get()
-                                                          .then((snap) {
-                                                        setState(() {
-                                                          players = new List<
-                                                                  String>.from(
-                                                              snap.data[
-                                                                  'players']);
-                                                          players.add(user.uid);
-                                                        });
-                                                        queueCollectionReference
-                                                            .document(
-                                                                gameItems[index]
-                                                                    .name)
-                                                            .updateData({
-                                                          'players': FieldValue
-                                                              .arrayUnion(
-                                                                  players)
-                                                        });
-                                                        toPlayGame(
-                                                            context,
-                                                            user,
-                                                            gameItems[index]
-                                                                .name);
-                                                      });
+                                                      toPlayGame(
+                                                          context,
+                                                          user,
+                                                          snaps[index].data['name']);
                                                     },
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -504,31 +418,8 @@ void toPlayGame(BuildContext context, FirebaseUser user, String gameName) {
   Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => PlayGamePage(user: user, gameName: gameName),
+          builder: (context) => GamePage(user: user, gameName: gameName),
           fullscreenDialog: true));
-}
-
-void toProfile(BuildContext context, FirebaseUser user) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ProfilePage(user: user),
-          fullscreenDialog: true));
-}
-
-void toSettings() {
-  //  Navigator.push(
-  //      context,
-  //      MaterialPageRoute(
-  //          builder: (context) => SettingsPage(),
-  //          fullscreenDialog: true));
-}
-
-void toChallenge(BuildContext context) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ChallengePage(), fullscreenDialog: true));
 }
 
 void toEditGamePage(BuildContext context, DocumentSnapshot documentSnapshot) {
