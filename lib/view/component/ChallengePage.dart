@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/component/QrCodeScanPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -76,7 +75,6 @@ class _ChallengePageState extends State<ChallengePage> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () => visitProfile(context, items[index]),
-                  onDoubleTap: () => challenge(context),
                   child: Stack(
                     children: <Widget>[
                       Padding(
@@ -164,13 +162,6 @@ class _ChallengePageState extends State<ChallengePage> {
   }
 }
 
-void challenge(BuildContext context) {
-  // todo : should pass the user too.
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => QrCodeScanPage(), fullscreenDialog: true));
-}
 
 void visitProfile(BuildContext context, UserModel user) {
   Navigator.push(
