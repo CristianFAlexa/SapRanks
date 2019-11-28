@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 class QrCodeGenPage extends StatelessWidget {
-  final String data = Uuid().v4();
+  QrCodeGenPage(this.documentId, this.gameName);
+  final String documentId;
+  final String gameName;
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +16,17 @@ class QrCodeGenPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              "Encoded with : \n $data",
+/*            Text(
+              "Encoded with : \n $gameName $documentId",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,
               ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
+            ),*/
             QrImage(
-              data: data,
+              data: gameName+" "+documentId,
               gapless: true,
-              size: 250,
+              size: 400,
               errorCorrectionLevel: QrErrorCorrectLevel.H,
             )
           ],
