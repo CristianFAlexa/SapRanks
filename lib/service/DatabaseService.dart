@@ -28,7 +28,7 @@ class DatabaseService {
       final DocumentSnapshot snapshot =
           await tx.get(collectionReference.document());
       final UserModel userModel =
-          UserModel(uid, email, rank, role, profilePicture, name, 0, 0, 0);
+          UserModel(uid, email, rank, role, profilePicture, name, 0, 0, 0, new List<String>());
       final Map<String, dynamic> data = userModel.toMap();
       await tx.set(snapshot.reference, data);
       return data;
@@ -80,6 +80,18 @@ class DatabaseService {
   Stream<QuerySnapshot> getUsersEnrolmentList({int offset, int limit}) {
     Stream<QuerySnapshot> snapshots =
         usersEnrolmentCollectionReference.snapshots();
+    if (offset != null) {
+      snapshots = snapshots.skip(offset);
+    }
+    if (limit != null) {
+      snapshots = snapshots.take(limit);
+    }
+    return snapshots;
+  }
+
+  Stream<QuerySnapshot> getQueueList(String gameName,{int offset, int limit}) {
+    Stream<QuerySnapshot> snapshots =
+    queueCollectionReference.document(gameName).collection('active').snapshots();
     if (offset != null) {
       snapshots = snapshots.skip(offset);
     }
