@@ -8,6 +8,7 @@ class UserModel {
   int _disputeWin;
   int _disputeLoss;
   int _xp;
+  List<String> _history;
 
   UserModel(
       this._uid,
@@ -18,7 +19,8 @@ class UserModel {
       this._name,
       this._disputeWin,
       this._disputeLoss,
-      this._xp);
+      this._xp,
+      this._history);
 
   Map<String, dynamic> toJson() => {
         'email': this._email,
@@ -29,7 +31,8 @@ class UserModel {
         'name': this._name,
         'dispute_win': this._disputeWin,
         'dispute_loss': this._disputeLoss,
-        'xp': this._xp
+        'xp': this._xp,
+        'history': this._history
       };
 
   UserModel.map(dynamic obj) {
@@ -42,6 +45,7 @@ class UserModel {
     this._disputeWin = obj['dispute_win'];
     this._disputeLoss = obj['dispute_loss'];
     this._xp = obj['xp'];
+    this._history = obj['history'];
   }
 
   String get name => _name;
@@ -62,6 +66,8 @@ class UserModel {
 
   int get xp => _xp;
 
+  List<String> get history => _history;
+
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
     map['role'] = this._role;
@@ -73,6 +79,7 @@ class UserModel {
     map['dispute_win'] = this._disputeWin;
     map['dispute_loss'] = this._disputeLoss;
     map['xp'] = this._xp;
+    map['history'] = this._history;
     return map;
   }
 
@@ -86,5 +93,7 @@ class UserModel {
     this._disputeWin = map['dispute_win'];
     this._disputeLoss = map['dispute_loss'];
     this._xp = map['xp'];
+    var historyList = map['history'];
+    this._history = new List<String>.from(historyList);
   }
 }
