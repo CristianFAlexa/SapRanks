@@ -1,7 +1,8 @@
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/setup/login.dart';
 import 'package:bored/setup/register.dart';
-import 'package:bored/view/home.dart';
+import 'package:bored/view/component/MainPage.dart';
+import 'package:bored/view/component/message/MessageNotification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,12 +46,13 @@ class _WelcomeState extends State<Welcome> {
                       user.email.substring(0, 3),
                       0,
                       0,
-                      0)
+                      0,
+                      new List<String>())
                   .toJson())
             }
         });
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Home(user: user)));
+        context, MaterialPageRoute(builder: (context) => MainPage(user: user)));
   }
 
   @override
@@ -59,6 +61,7 @@ class _WelcomeState extends State<Welcome> {
       body: Builder(
         builder: (context) => Stack(
           children: <Widget>[
+            new MessageNotification(),
             new Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -78,14 +81,17 @@ class _WelcomeState extends State<Welcome> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  SignInButton(Buttons.Google, onPressed: () => _signWithGoogle(context)),
+                  SignInButton(Buttons.Google,
+                      onPressed: () => _signWithGoogle(context)),
                   SignInButtonBuilder(
                     text: 'Sign in with Email',
                     icon: Icons.email,
                     onPressed: toLogin,
                     backgroundColor: Colors.blueGrey[900],
                   ),
-                  SizedBox(height: 200,),
+                  SizedBox(
+                    height: 200,
+                  ),
                   SignInButtonBuilder(
                     text: 'Register now',
                     icon: Icons.person_add,
