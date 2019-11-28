@@ -24,14 +24,21 @@ class _ProfilePageState extends State<ProfilePage> {
   UserModel _userModel;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     collectionReference.document(user.uid).get().then((docSnap) {
-      _userModel = UserModel.map(docSnap.data);
+      setState(() {
+        _userModel = UserModel.map(docSnap.data);
+      });
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return StreamBuilder(
         stream: collectionReference.document(this.user.uid).snapshots(),
         builder: (context, snapshot) {
-          return Stack(
+          return  Stack(
             children: <Widget>[
               Image.asset(
                 "assets/images/spaceman.jpg",
