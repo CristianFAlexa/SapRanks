@@ -1,14 +1,25 @@
+import 'package:bored/service/DatabaseService.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QrCodeScanPage extends StatefulWidget {
+  QrCodeScanPage(this.user);
+
+  final FirebaseUser user;
+
   @override
-  _QrCodeScanPageState createState() => _QrCodeScanPageState();
+  _QrCodeScanPageState createState() => _QrCodeScanPageState(user);
 }
 
 class _QrCodeScanPageState extends State<QrCodeScanPage> {
+  _QrCodeScanPageState(this.user);
+
+  final FirebaseUser user;
+
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  var qrText = "";                                      // todo : the text decode qr to check against the one form fb.
+  var qrText = "";
   QRViewController controller;
 
   @override
@@ -39,6 +50,26 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData;
+        if (qrText != null) {
+          final List<String> qrList = qrText.split(" ");
+          List<String> players;
+          queueCollectionReference
+              .document(qrList[0])
+              .collection('active')
+              .document(qrList[1])
+              .get()
+              .then((snap) {
+            setState(() {
+              players = new List<String>.from(snap.data['players']);
+              players.add(user.uid);
+            });
+            queueCollectionReference
+                .document(qrList[0])
+                .collection('active')
+                .document(qrList[1])
+                .updateData({'players': FieldValue.arrayUnion(players)});
+          });
+        }
       });
     });
   }
