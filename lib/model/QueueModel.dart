@@ -5,9 +5,18 @@ class QueueModel {
   List<String> _players;
   int _minPlayers;
   int _maxPlayers;
+  Timestamp _eventDate;
+  String _location;
+  String _description;
 
-  QueueModel(
-      this._createdAt, this._players, this._minPlayers, this._maxPlayers);
+  QueueModel(this._createdAt, this._players, this._minPlayers, this._maxPlayers,
+      this._eventDate, this._location, this._description);
+
+  String get location => _location;
+
+  String get description => _description;
+
+  Timestamp get eventDate => _eventDate;
 
   int get maxPlayers => _maxPlayers;
 
@@ -22,6 +31,9 @@ class QueueModel {
     this._players = obj['players'];
     this._maxPlayers = obj['max_players'];
     this._minPlayers = obj['min_players'];
+    this._description = obj['description'];
+    this._eventDate = obj['event_date'];
+    this._location = obj['location'];
   }
 
   Map<String, dynamic> toMap() {
@@ -30,13 +42,20 @@ class QueueModel {
     map['players'] = this._players;
     map['max_players'] = this._maxPlayers;
     map['min_players'] = this._minPlayers;
+    map['description'] = this._description;
+    map['event_date'] = this._eventDate;
+    map['location'] = this._location;
     return map;
   }
 
   QueueModel.fromMap(Map<String, dynamic> map) {
     this._createdAt = map['created_at'];
-    this._players = map['players'];
+    var playerList = map['players'];
+    this._players = new List<String>.from(playerList);
     this._minPlayers = map['min_players'];
     this._maxPlayers = map['max_players'];
+    this._description = map['description'];
+    this._location = map['location'];
+    this._eventDate = map['event_date'];
   }
 }
