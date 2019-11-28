@@ -63,7 +63,7 @@ class _EditGamePageState extends State<EditGamePage> {
     if (game==null) game = GameModel.fromMap(documentSnapshot.data);
     return Scaffold(
       appBar: GradientAppBar(
-        gradient: LinearGradient(colors: [Colors.blue, Colors.lightBlueAccent]),
+        gradient: LinearGradient(colors: [Colors.black87, Colors.black38, Colors.black12]),
       ),
       body: Form(
         key: _formKey,
@@ -80,7 +80,7 @@ class _EditGamePageState extends State<EditGamePage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(color: Colors.black, blurRadius: 2)
@@ -95,7 +95,7 @@ class _EditGamePageState extends State<EditGamePage> {
                         onSaved: (input) => _name = input,
                         decoration: InputDecoration(
                             icon: Icon(Icons.update),
-                            hintText: 'Choose a name'),
+                            hintText: 'Name'),
                       ),
                     ),
                   ],
@@ -149,9 +149,9 @@ class _EditGamePageState extends State<EditGamePage> {
                   updateGame(context);
                 },
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                color: Colors.blue,
+                color: Colors.blueGrey,
                 child: new Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -162,7 +162,7 @@ class _EditGamePageState extends State<EditGamePage> {
                     new Container(
                         padding: EdgeInsets.only(left: 10.0, right: 10.0),
                         child: new Text(
-                          "Update game",
+                          "All set up",
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         )),
