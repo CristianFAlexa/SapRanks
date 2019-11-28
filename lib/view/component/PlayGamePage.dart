@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:bored/service/DatabaseService.dart';
+import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,44 +21,6 @@ class _PlayGamePageState extends State<PlayGamePage> {
 
   final FirebaseUser user;
   final String gameName;
-
-  final duration = const Duration(seconds: 1);
-  var swatch = Stopwatch();
-  String timeDisplay = "00:00:00";
-
-  Timer startTimer() {
-    return Timer(duration, isDone);
-  }
-
-  void isDone() {
-    if (swatch.isRunning) {
-      startTimer();
-    }
-    setState(() {
-      timeDisplay = swatch.elapsed.inHours.toString().padLeft(2, "0") +
-          ":" +
-          (swatch.elapsed.inMinutes % 60).toString().padLeft(2, "0") +
-          ":" +
-          (swatch.elapsed.inSeconds % 60).toString().padLeft(2, "0");
-    });
-  }
-
-  void startStopWatch() {
-    swatch.start();
-    startTimer();
-  }
-
-  @override
-  void initState() {
-    startStopWatch();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    swatch.stop();
-  }
 
   Widget getTextWidgets(List<dynamic> strings) {
     return new Column(
@@ -123,7 +84,7 @@ class _PlayGamePageState extends State<PlayGamePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: queueCollectionReference.document(gameName).snapshots(),
+        stream: queueCollectionReference.document(gameName).collection('active').document('Zo93EvNtayzsuhy1H8Zq').snapshots(),
         builder: (context, snapshot) {
           return (snapshot.data == null)
               ? Text("Loading..")
@@ -140,7 +101,7 @@ class _PlayGamePageState extends State<PlayGamePage> {
                           Colors.black38,
                           Colors.black12
                         ]),
-                    automaticallyImplyLeading: false,
+                    automaticallyImplyLeading: true,
                   ),
                   body: Container(
                     decoration: BoxDecoration(
@@ -161,57 +122,28 @@ class _PlayGamePageState extends State<PlayGamePage> {
                         ),
                         Center(
                           child: Text(
-                            "Players: \n  ${snapshot.data['players'].length}/${snapshot.data['max_players']}",
+                            "${snapshot.data['players'].length}/${snapshot.data['max_players']} players",
                             style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                backgroundColor: Colors.black12),
+                            ),
                           ),
                         ),
                         getTextWidgets(snapshot.data['players']),
                         SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
-                        Center(
-                          child: Text(
-                            "$timeDisplay",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                backgroundColor: Colors.black12),
-                          ),
+                      Center(
+                        child: CountdownFormatted(
+                          duration: Duration(hours: 1),
+                          builder: (BuildContext ctx, String remaining) {
+                            return Text("Game starts in $remaining", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),); // 01:00:00
+                          },
                         ),
+                      ),
                         SizedBox(
-                          height: 200,
-                        ),
-                        Center(
-                          child: RaisedButton(
-                            onPressed: () {},
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            color: Colors.green,
-                            child: new Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                ),
-                                new Container(
-                                    padding: EdgeInsets.only(
-                                        left: 10.0, right: 10.0),
-                                    child: new Text(
-                                      "Start game",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                              ],
-                            ),
-                          ),
+                          height: 100,
                         ),
                       ],
                     ),
