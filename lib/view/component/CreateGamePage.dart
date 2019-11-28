@@ -53,9 +53,6 @@ class _CreateGamePageState extends State<CreateGamePage> {
       Firestore.instance
           .collection('games').document('$uid')
           .setData(GameModel(_name, 0, _downloadUrl, uid, int.parse(_minPlayers),  int.parse(_maxPlayers)).toMap());
-      // creating a queue for later use
-      queueCollectionReference.document(_name)
-          .setData(QueueModel(new Timestamp.now(),  new List<String>(), int.parse(_minPlayers), int.parse(_maxPlayers)).toMap());
       Navigator.of(context).pop();
     } else {
       Scaffold.of(context).showSnackBar(new SnackBar(
@@ -68,7 +65,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
     return Scaffold(
       appBar: GradientAppBar(
         gradient:
-            LinearGradient(colors: [Colors.green, Colors.lightGreenAccent]),
+            LinearGradient(colors: [Colors.black87, Colors.black38, Colors.black12]),
       ),
       body: Form(
         key: _formKey,
@@ -85,7 +82,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(color: Colors.black, blurRadius: 2)
@@ -100,7 +97,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                         onSaved: (input) => _name = input,
                         decoration: InputDecoration(
                             icon: Icon(Icons.gamepad),
-                            hintText: 'Choose a name'),
+                            hintText: 'Name'),
                       ),
                     ),
                     SizedBox(height: 10,),
@@ -110,7 +107,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(color: Colors.black, blurRadius: 2)
@@ -125,7 +122,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                         onSaved: (input) => _minPlayers = input,
                         decoration: InputDecoration(
                             icon: Icon(FontAwesomeIcons.minus),
-                            hintText: 'Choose min # of players'),
+                            hintText: 'Min # of players'),
                       ),
                     ),
                     SizedBox(height: 10,),
@@ -135,7 +132,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                       padding: EdgeInsets.only(
                           top: 4, left: 16, right: 16, bottom: 4),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(color: Colors.black, blurRadius: 2)
@@ -150,7 +147,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                         onSaved: (input) => _maxPlayers = input,
                         decoration: InputDecoration(
                             icon: Icon(FontAwesomeIcons.plus),
-                            hintText: 'Choose max # of players'),
+                            hintText: 'Max # of players'),
                       ),
                     ),
                   ],
@@ -206,9 +203,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                   saveNewGame(context);
                 },
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                color: Colors.green,
+                color: Colors.blueGrey,
                 child: new Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -219,7 +216,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                     new Container(
                         padding: EdgeInsets.only(left: 10.0, right: 10.0),
                         child: new Text(
-                          "Add game",
+                          "All set up",
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         )),
