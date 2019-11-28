@@ -46,14 +46,12 @@ class _RegisterState extends State<Register> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      Colors.black12,
-                      Colors.black12,
-                      Colors.black12,
-                      Colors.black26,
-                      Colors.black38,
-                    ]
-                )
-            ),
+                  Colors.black12,
+                  Colors.black12,
+                  Colors.black12,
+                  Colors.black26,
+                  Colors.black38,
+                ])),
             child: Center(
               child: Form(
                 key: _formKey,
@@ -67,10 +65,11 @@ class _RegisterState extends State<Register> {
                           Container(
                             width: MediaQuery.of(context).size.width / 1.2,
                             height: 50,
-                            padding:
-                            EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                            padding: EdgeInsets.only(
+                                top: 4, left: 16, right: 16, bottom: 4),
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
                                 color: Colors.white,
                                 boxShadow: [
                                   BoxShadow(color: Colors.black, blurRadius: 2)
@@ -92,17 +91,20 @@ class _RegisterState extends State<Register> {
                             child: Column(
                               children: <Widget>[
                                 Container(
-                                  width: MediaQuery.of(context).size.width / 1.2,
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.2,
                                   height: 50,
-                                  padding:
-                                  EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                                  padding: EdgeInsets.only(
+                                      top: 4, left: 16, right: 16, bottom: 4),
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
                                       color: Colors.white,
                                       boxShadow: [
-                                        BoxShadow(color: Colors.black, blurRadius: 2)
+                                        BoxShadow(
+                                            color: Colors.black, blurRadius: 2)
                                       ]),
-                                  child:  TextFormField(
+                                  child: TextFormField(
                                     // ignore: missing_return
                                     validator: (input) {
                                       if (input.length < 8) {
@@ -111,7 +113,8 @@ class _RegisterState extends State<Register> {
                                     },
                                     onSaved: (input) => _password = input,
                                     decoration: InputDecoration(
-                                        icon: Icon(FontAwesomeIcons.key), hintText: 'Password'),
+                                        icon: Icon(FontAwesomeIcons.key),
+                                        hintText: 'Password'),
                                     obscureText: true,
                                   ),
                                 )
@@ -121,7 +124,9 @@ class _RegisterState extends State<Register> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     RaisedButton(
                       onPressed: signUp,
                       shape: RoundedRectangleBorder(
@@ -176,7 +181,8 @@ class _RegisterState extends State<Register> {
                 user.email.substring(0, 3),
                 0,
                 0,
-                0)
+                0,
+                new List<String>())
             .toJson());
 
         Navigator.pushReplacement(
