@@ -20,6 +20,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   var qrText = "";
+  var qrFlag = "NOT DONE";
   QRViewController controller;
 
   @override
@@ -37,7 +38,58 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
           Expanded(
             flex: 1,
             child: Center(
-              child: Text('Scan result: $qrText'),
+              child: Column(
+                children: <Widget>[
+                  Text('Scan result: $qrFlag'),
+                  RaisedButton(
+                    onPressed: () {
+                      if (qrText != null) {
+                        final List<String> qrList = qrText.split(" ");
+                        List<String> players;
+                        queueCollectionReference
+                            .document(qrList[0])
+                            .collection('active')
+                            .document(qrList[1])
+                            .get()
+                            .then((snap) {
+                          setState(() {
+                            players =
+                            new List<String>.from(snap.data['players']);
+                            players.add(user.uid);
+                          });
+                          queueCollectionReference
+                              .document(qrList[0])
+                              .collection('active')
+                              .document(qrList[1])
+                              .updateData(
+                              {'players': FieldValue.arrayUnion(players)});
+                        });
+                      }
+                      Navigator.of(context).pop();
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    color: Colors.blueGrey,
+                    child: new Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.directions_run,
+                          color: Colors.white,
+                        ),
+                        new Container(
+                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                            child: new Text(
+                              "ok",
+                              style: TextStyle(
+                                  color: Colors.white, fontWeight: FontWeight.bold),
+                            )),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         ],
@@ -50,26 +102,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData;
-        if (qrText != null) {
-          final List<String> qrList = qrText.split(" ");
-          List<String> players;
-          queueCollectionReference
-              .document(qrList[0])
-              .collection('active')
-              .document(qrList[1])
-              .get()
-              .then((snap) {
-            setState(() {
-              players = new List<String>.from(snap.data['players']);
-              players.add(user.uid);
-            });
-            queueCollectionReference
-                .document(qrList[0])
-                .collection('active')
-                .document(qrList[1])
-                .updateData({'players': FieldValue.arrayUnion(players)});
-          });
-        }
+        qrFlag = "SUCCESFUL";
       });
     });
   }

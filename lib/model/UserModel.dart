@@ -93,7 +93,8 @@ class UserModel {
     this._disputeWin = map['dispute_win'];
     this._disputeLoss = map['dispute_loss'];
     this._xp = map['xp'];
-    var historyList = map['history'];
-    this._history = new List<String>.from(historyList);
+    // todo fix this
+//    var historyList = map['history'];
+//    this._history = new List<String>.from(historyList);
   }
 }
