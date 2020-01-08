@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
 
   List<bool> subscribedList = List();
 
-  bool checkSubscription(String userId, String gameId) {
+  Future<bool> checkSubscription(String userId, String gameId) async {
     bool subscription = false;
     gamesEnrolmentCollectionReference.document(gameId).get().then((snaps) {
       print(snaps.data);
@@ -52,17 +52,6 @@ class _HomeState extends State<Home> {
   }
 
   void onPlayGame(BuildContext context, String userId, String gameId) {
-    // todo : figure out games enrolment shit
-//    await gamesEnrolmentCollectionReference.document(gameId).get().then((snap) async {
-//      setState(() {
-//        gamesEnrolment = new List<String>.from(snap.data['user_id']);
-//        gamesEnrolment.add(userId);
-//        gamesEnrolmentCollectionReference
-//            .document(gameId)
-//            .setData({'user_id': FieldValue.arrayUnion(gamesEnrolment)});
-//      });
-//    });
-
     usersEnrolment.add(gameId);
     usersEnrolmentCollectionReference
         .document(userId)
@@ -85,9 +74,11 @@ class _HomeState extends State<Home> {
               ),
               actions: <Widget>[
                 FlatButton(
+                  padding: EdgeInsets.only(left: 8.0, right: 135.0),
                   child: Text(
                     "Delete",
                     style: TextStyle(fontWeight: FontWeight.bold,
+                    fontSize: 16,
                     color: Colors.red),
                   ),
                   onPressed: () => {deleteGame(context, gameReference)},
@@ -146,7 +137,7 @@ class _HomeState extends State<Home> {
         gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black87, Colors.black38, Colors.black12]),
+            colors:  [Colors.blueGrey[900], Colors.blueGrey[900] ]),
         automaticallyImplyLeading: true,
         actions: <Widget>[
           StreamBuilder(
@@ -157,6 +148,14 @@ class _HomeState extends State<Home> {
                     : Container(
                         child: Row(
                         children: <Widget>[
+                          (_editGameState)
+                              ? SignInButtonBuilder(
+                            text: 'Create game',
+                            icon: Icons.library_add,
+                            onPressed: () => toCreateGamePage(context),
+                            backgroundColor: Colors.blueGrey[900],
+                          )
+                              : SizedBox(),
                           (snapshot.data['role'] == "admin")
                               ? IconButton(
                                   icon: Icon(
@@ -174,30 +173,11 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.blueGrey[800],
-                Colors.blueGrey[700],
-                Colors.blueGrey[700],
-                Colors.blueGrey[800],
-              ]),
-        ),
         child: Column(
           children: <Widget>[
             SizedBox(
               height: 10,
             ),
-            (_editGameState)
-                ? SignInButtonBuilder(
-                    text: 'Create game',
-                    icon: Icons.library_add,
-                    onPressed: () => toCreateGamePage(context),
-                    backgroundColor: Colors.blueGrey[900],
-                  )
-                : SizedBox(),
             Expanded(
               child: Container(
                 width: MediaQuery.of(context).size.width,

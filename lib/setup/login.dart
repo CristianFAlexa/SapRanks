@@ -1,4 +1,4 @@
-import 'package:bored/view/home.dart';
+import 'package:bored/view/component/MainPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     return Stack(
       children: <Widget>[
         Image.asset(
-          "assets/images/login.jpg",
+          "assets/images/spaceman.jpg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -122,13 +122,13 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(height: 5,),
                     RaisedButton(
                       onPressed: signIn,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      color: Colors.red,
+                      color: Color.fromRGBO(255, 90, 0, 1),
                       child: new Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -142,7 +142,8 @@ class _LoginPageState extends State<LoginPage> {
                                 "Sign in",
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
                               )),
                         ],
                       ),
@@ -167,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
             .user;
 
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Home(user: user)));
+            context, MaterialPageRoute(builder: (context) => MainPage(user: user)));
       } catch (e) {
         print(e);
       }

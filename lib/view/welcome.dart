@@ -57,53 +57,68 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Builder(
-        builder: (context) => Stack(
-          children: <Widget>[
-            new MessageNotification(),
-            new Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.blueGrey[800],
-                      Colors.blueGrey[700],
-                      Colors.blueGrey[600],
-                      Colors.blueGrey[700],
-                      Colors.blueGrey[800],
-                    ]),
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/images/spaceman.jpg",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Builder(
+          builder: (context) => Stack(
+            children: <Widget>[
+              new MessageNotification(),
+              new Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black87,
+                        Colors.black54,
+                        Colors.black45,
+                        Colors.black26,
+                        Colors.black12,
+                        Colors.black26,
+                        Colors.black45,
+                        Colors.black54,
+                        Colors.black87,
+                      ]),
+                ),
               ),
-            ),
-            new Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SignInButton(Buttons.Google,
-                      onPressed: () => _signWithGoogle(context)),
-                  SignInButtonBuilder(
-                    text: 'Sign in with Email',
-                    icon: Icons.email,
-                    onPressed: toLogin,
-                    backgroundColor: Colors.blueGrey[900],
-                  ),
-                  SizedBox(
-                    height: 200,
-                  ),
-                  SignInButtonBuilder(
-                    text: 'Register now',
-                    icon: Icons.person_add,
-                    onPressed: toRegister,
-                    backgroundColor: Colors.green,
-                  ),
-                ],
-              ),
-            )
-          ],
+              new Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SignInButton(Buttons.Google,
+                        onPressed: () => _signWithGoogle(context)),
+                    SignInButtonBuilder(
+                      text: 'Sign in with Email',
+                      icon: Icons.email,
+                      onPressed: toLogin,
+                      backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SignInButtonBuilder(
+                      text: 'Register now',
+                      icon: Icons.person_add,
+                      onPressed: toRegister,
+                      backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
+      ]
     );
   }
 

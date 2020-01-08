@@ -57,17 +57,6 @@ class _ChallengePageState extends State<ChallengePage> {
       body: Column(
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.blueGrey[800],
-                    Colors.blueGrey[700],
-                    Colors.blueGrey[700],
-                    Colors.blueGrey[800],
-                  ]),
-            ),
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height - 80,
             child: ListView.builder(
@@ -171,10 +160,37 @@ void visitProfile(BuildContext context, UserModel user) {
           fullscreenDialog: true));
 }
 
-class UsersProfilePage extends StatelessWidget {
+class UsersProfilePage extends StatefulWidget {
   UsersProfilePage({this.user});
 
   final UserModel user;
+
+  @override
+  _UsersProfilePageState createState() => _UsersProfilePageState(user);
+}
+
+class _UsersProfilePageState extends State<UsersProfilePage> {
+  _UsersProfilePageState(this.user);
+  final UserModel user;
+
+  StreamSubscription<DocumentSnapshot> items;
+  List<String> history;
+
+  @override
+  void initState() {
+    super.initState();
+
+    items?.cancel();
+    items = collectionReference
+        .document(user.uid)
+        .snapshots()
+        .listen((DocumentSnapshot snapshot) {
+      final List<String> itemList = List.from(snapshot.data['history']);
+      setState(() {
+        this.history = itemList;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,11 +204,52 @@ class UsersProfilePage extends StatelessWidget {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: CustomAppBar2(user: user),
+          appBar: CustomAppBar2(user: widget.user),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(color: Colors.grey))),
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "History",
+                                    style: TextStyle(
+                                        fontSize: 25.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      showHistory(history)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
+
 }
 
 // ignore: must_be_immutable

@@ -49,7 +49,10 @@ class _CreateQueueState extends State<CreateQueue> {
                 int.parse(_maxPlayers),
                 new Timestamp.fromDate(dateTime),
                 _location,
-                _description)
+                _description,
+                user.uid,
+                new List<String>.from([user.uid]),
+                new List<String>.from([null]))
             .toMap());
     Navigator.of(context).pop();
   }

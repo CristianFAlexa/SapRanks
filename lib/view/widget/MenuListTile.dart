@@ -18,7 +18,7 @@ class MenuListTile extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               border: Border(
-                  bottom: BorderSide(color: Colors.blueGrey.shade100)
+                  bottom: BorderSide(color: Colors.black)
               )
           ),
           height: 50,
@@ -27,17 +27,17 @@ class MenuListTile extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Icon(icon, color: Colors.white,),
+                  Icon(icon,),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       text,
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ),
                 ],
               ),
-              Icon(Icons.arrow_forward_ios, color: Colors.white,),
+              Icon(Icons.arrow_forward_ios),
             ],
           ),
         ),

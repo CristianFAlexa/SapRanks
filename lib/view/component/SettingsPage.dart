@@ -31,17 +31,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
 
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Colors.blueGrey[800],
-                Colors.blueGrey[700],
-                Colors.blueGrey[700],
-                Colors.blueGrey[800],
-              ]),
-        ),
         child: ListView(
           children: <Widget>[
             MenuListTile(

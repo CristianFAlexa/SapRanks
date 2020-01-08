@@ -8,9 +8,21 @@ class QueueModel {
   Timestamp _eventDate;
   String _location;
   String _description;
+  String _creator;
+
+  List<String> _blueTeam;
+  List<String> _redTeam;
 
   QueueModel(this._createdAt, this._players, this._minPlayers, this._maxPlayers,
-      this._eventDate, this._location, this._description);
+      this._eventDate, this._location, this._description, this._creator,
+      this._blueTeam, this._redTeam
+      );
+
+  List<String> get redTeam => _redTeam;
+
+  List<String> get blueTeam => _blueTeam;
+
+  String get creator => _creator;
 
   String get location => _location;
 
@@ -34,6 +46,9 @@ class QueueModel {
     this._description = obj['description'];
     this._eventDate = obj['event_date'];
     this._location = obj['location'];
+    this._creator = obj['creator'];
+    this._redTeam = obj['red_team'];
+    this._blueTeam = obj['blue_team'];
   }
 
   Map<String, dynamic> toMap() {
@@ -45,6 +60,9 @@ class QueueModel {
     map['description'] = this._description;
     map['event_date'] = this._eventDate;
     map['location'] = this._location;
+    map['creator'] = this._creator;
+    map['red_team'] = this._redTeam;
+    map['blue_team'] = this._blueTeam;
     return map;
   }
 
@@ -57,5 +75,12 @@ class QueueModel {
     this._description = map['description'];
     this._location = map['location'];
     this._eventDate = map['event_date'];
+    this._creator = map['creator'];
+
+    var redTeamList = map['red_team'];
+    this._redTeam = new List<String>.from(redTeamList);
+
+    var blueTeamList = map['blue_team'];
+    this._blueTeam = new List<String>.from(blueTeamList);
   }
 }

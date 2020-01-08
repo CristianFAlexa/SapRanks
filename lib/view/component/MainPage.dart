@@ -33,8 +33,6 @@ class _MainPageState extends State<MainPage> {
   List<DocumentSnapshot> snaps;
   StreamSubscription<QuerySnapshot> games;
   final GoogleSignIn gSignIn = GoogleSignIn();
-  StreamSubscription<DocumentSnapshot> items;
-  List<String> history;
 
   @override
   void initState() {
@@ -45,17 +43,6 @@ class _MainPageState extends State<MainPage> {
       final snapDocs = snapshot.documents;
       setState(() {
         this.snaps = snapDocs;
-      });
-    });
-
-    items?.cancel();
-    items = collectionReference
-        .document(user.uid)
-        .snapshots()
-        .listen((DocumentSnapshot snapshot) {
-      final List<String> itemList = List.from(snapshot.data['history']);
-      setState(() {
-        this.history = itemList;
       });
     });
   }
@@ -70,18 +57,6 @@ class _MainPageState extends State<MainPage> {
                 colors: [Colors.black87, Colors.black38, Colors.black12])),
         drawer: Drawer(
           child: Container(
-            decoration:  BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.blueGrey[800],
-                    Colors.blueGrey[700],
-                    Colors.blueGrey[700],
-                    Colors.blueGrey[800],
-                  ]),
-            ),
-
             child: ListView(
               children: <Widget>[
                 StreamBuilder(
@@ -98,18 +73,19 @@ class _MainPageState extends State<MainPage> {
                                   decoration: BoxDecoration(
                                       boxShadow: [
                                         BoxShadow(
-                                            color: Colors.black54, blurRadius: 12)
+                                            color: Colors.black54,
+                                            blurRadius: 12)
                                       ],
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
                                           fit: BoxFit.cover,
-                                          image: (snapshot
-                                              .data['profile_picture'] ==
-                                              null)
+                                          image: (snapshot.data[
+                                                      'profile_picture'] ==
+                                                  null)
                                               ? AssetImage(
-                                              "assets/images/default-profile-picture.png")
+                                                  "assets/images/default-profile-picture.png")
                                               : NetworkImage(snapshot
-                                              .data['profile_picture']))),
+                                                  .data['profile_picture']))),
                                 ),
                                 Text("${snapshot.data['name']}")
                               ],
@@ -157,12 +133,15 @@ class _MainPageState extends State<MainPage> {
                                   builder: (context) => ChallengePage(),
                                   fullscreenDialog: true))
                         }),
-                MenuListTile(Icons.settings, "Settings", () => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingsPage(user)))
-                }),
+                MenuListTile(
+                    Icons.settings,
+                    "Settings",
+                    () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SettingsPage(user)))
+                        }),
                 MenuListTile(
                     FontAwesomeIcons.signOutAlt,
                     "Sign out",
@@ -179,51 +158,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Colors.blueGrey[800],
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[700],
-                  Colors.blueGrey[800],
-                ]),
-          ),
-          child: new Column(
-            children: <Widget>[
-              new MenuCarouselSlider(snaps, user),
-              new Container(
-                height: 50,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "History",
-                            style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              (history != null)
-                  ? new Expanded(
-                      child: new ListView.builder(
-                          itemCount: history.length,
-                          itemBuilder: (context, index) {
-                            return new GameHistoryTile(
-                                Icons.history, history[index].split(" "), () {});
-                          }))
-                  : SizedBox(),
-            ],
-          ),
-        ));
+        body: new MenuCarouselSlider(snaps, user),
+    );
   }
 }

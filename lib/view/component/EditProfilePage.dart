@@ -66,6 +66,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         Scaffold.of(context).showSnackBar(new SnackBar(
             content: new Text('You did not choose a profile picture.')));
+        Navigator.of(context).pop();
       }
 
       _formState.save();

@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
+import 'package:bored/view/widget/GameHistoryTile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,6 +24,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final FirebaseUser user;
   UserModel _userModel;
+  StreamSubscription<DocumentSnapshot> items;
+  List<String> history;
 
   @override
   void initState() {
@@ -29,6 +33,17 @@ class _ProfilePageState extends State<ProfilePage> {
     collectionReference.document(user.uid).get().then((docSnap) {
       setState(() {
         _userModel = UserModel.map(docSnap.data);
+      });
+    });
+
+    items?.cancel();
+    items = collectionReference
+        .document(user.uid)
+        .snapshots()
+        .listen((DocumentSnapshot snapshot) {
+      final List<String> itemList = List.from(snapshot.data['history']);
+      setState(() {
+        this.history = itemList;
       });
     });
   }
@@ -70,19 +85,46 @@ class _ProfilePageState extends State<ProfilePage> {
                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                children: <Widget>[
-                                 Container(
-                                   child: Column(
-                                     children: <Widget>[
-                                       Text(
-                                         "Contact",
-                                         style: TextStyle(color: Colors.white),
-                                       ),
-                                       Text(
-                                         //"${snapshot.data['email']}",
-                                         "${snapshot.data['email']}",
-                                         style: TextStyle(color: Colors.white, fontSize: 20),
-                                       ),
-                                     ],
+                                 Expanded(
+                                   child: Container(
+                                     child: Column(
+                                       children: <Widget>[
+                                         Container(
+                                           decoration: BoxDecoration(
+                                               border: Border(bottom: BorderSide(color: Colors.grey))),
+                                           height: 50,
+                                           child: Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: <Widget>[
+                                               Row(
+                                                 children: <Widget>[
+                                                   Padding(
+                                                     padding: const EdgeInsets.all(8.0),
+                                                     child: Text(
+                                                       "History",
+                                                       style: TextStyle(
+                                                         fontSize: 25.0,
+                                                         fontWeight: FontWeight.bold,
+                                                           color: Colors.white
+                                                       ),
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                             ],
+                                           ),
+                                         ),
+                                         showHistory(history),
+                                         Text(
+                                           "Contact",
+                                           style: TextStyle(color: Colors.white),
+                                         ),
+                                         Text(
+                                           "${snapshot.data['email']}",
+                                           style: TextStyle(color: Colors.white, fontSize: 20),
+                                         ),
+                                       ],
+                                     ),
                                    ),
                                  ),
                                ],
@@ -297,4 +339,16 @@ void editProfile(BuildContext context, FirebaseUser user) {
                 user: user,
               ),
           fullscreenDialog: true));
+}
+
+Widget showHistory(List<String> history) {
+  return (history != null)
+      ? new Expanded(
+      child: new ListView.builder(
+          itemCount: history.length,
+          itemBuilder: (context, index) {
+            return new GameHistoryTile(
+                Icons.history, history[index].split(" "), () {});
+          }))
+      : new SizedBox();
 }

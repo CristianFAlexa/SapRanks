@@ -26,7 +26,7 @@ class _RegisterState extends State<Register> {
     return Stack(
       children: <Widget>[
         Image.asset(
-          "assets/images/register2.jpg",
+          "assets/images/spaceman.jpg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -132,7 +132,7 @@ class _RegisterState extends State<Register> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      color: Colors.red,
+                      color: Color.fromRGBO(255, 90, 0, 1),
                       child: new Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -179,7 +179,7 @@ class _RegisterState extends State<Register> {
                 'user_role',
                 null,
                 user.email.substring(0, 3),
-                0,
+                1,
                 0,
                 0,
                 new List<String>())

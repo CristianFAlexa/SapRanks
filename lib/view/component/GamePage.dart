@@ -54,6 +54,72 @@ class _GamePageState extends State<GamePage> {
     super.initState();
   }
 
+  void addUserToList(int index, String listName) {
+    List<String> players;
+    queueCollectionReference
+        .document(gameName)
+        .collection('active')
+        .document(snaps[index].documentID)
+        .get()
+        .then((snap) {
+      setState(() {
+        var tmpList = new List<String>.from(snap.data[listName]);
+        tmpList.removeWhere( (item) => item == null);
+        players = tmpList;
+        players.add(user.uid);
+      });
+      queueCollectionReference
+          .document(gameName)
+          .collection('active')
+          .document(snaps[index].documentID)
+          .updateData({listName: FieldValue.arrayUnion(players)});
+      toQueue(context, user, gameName, snaps[index].documentID);
+    });
+  }
+
+  void showChooseTeamDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //Here we will build the content of the dialog
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10)), // RoundedRectangleBorder,
+              title: Text(
+                "Choose a team",
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    "Blue team",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                  onPressed: () {
+                    addUserToList(index, 'players');
+                    addUserToList(index, 'blue_team');
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text(
+                    "Red team",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                  onPressed: () {
+                    addUserToList(index, 'players');
+                    addUserToList(index, 'red_team');
+                    Navigator.of(context).pop();
+                  },
+                )
+              ]);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,19 +127,16 @@ class _GamePageState extends State<GamePage> {
         gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black87, Colors.black38, Colors.black12]),
+            colors: [Colors.black, Colors.black]),
         automaticallyImplyLeading: true,
-        actions: <Widget>[],
-      ),
-      body: new Column(
-        children: <Widget>[
+        actions: <Widget>[
           Center(
             child: RaisedButton(
               onPressed: () => toCreateQueue(context, user, gameName),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
-              color: Colors.blueGrey,
+              color: Colors.transparent,
               child: new Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -82,9 +145,9 @@ class _GamePageState extends State<GamePage> {
                     color: Colors.white,
                   ),
                   new Container(
-                      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                      padding: EdgeInsets.only(left: 10.0, right: 110.0),
                       child: new Text(
-                        "Create new queue",
+                        "Create new event",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       )),
@@ -92,6 +155,10 @@ class _GamePageState extends State<GamePage> {
               ),
             ),
           ),
+        ],
+      ),
+      body: new Column(
+        children: <Widget>[
           Expanded(
             child: Container(
               width: MediaQuery.of(context).size.width,
@@ -232,61 +299,85 @@ class _GamePageState extends State<GamePage> {
                                               ),
                                             ],
                                           ),
-                                          RaisedButton(
-                                            onPressed: () {
-                                              List<String> players;
-                                              queueCollectionReference
-                                                  .document(gameName)
-                                                  .collection('active')
-                                                  .document(
-                                                      snaps[index].documentID)
-                                                  .get()
-                                                  .then((snap) {
-                                                setState(() {
-                                                  players =
-                                                      new List<String>.from(
-                                                          snap.data['players']);
-                                                  players.add(user.uid);
-                                                });
-                                                queueCollectionReference
-                                                    .document(gameName)
-                                                    .collection('active')
-                                                    .document(
-                                                        snaps[index].documentID)
-                                                    .updateData({
-                                                  'players':
-                                                      FieldValue.arrayUnion(
-                                                          players)
-                                                });
-                                                toQueue(
-                                                    context, user, gameName);
-                                              });
-                                            },
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                            ),
-                                            color: Colors.blueGrey,
-                                            child: new Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.arrow_forward,
-                                                  color: Colors.white,
+                                          (!items[index]
+                                                  .players
+                                                  .contains(user.uid))
+                                              ? RaisedButton(
+                                                  onPressed: () {
+                                                    showChooseTeamDialog(
+                                                        context, index);
+                                                  },
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                  ),
+                                                  color: Colors.blueGrey,
+                                                  child: new Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.arrow_forward,
+                                                        color: Colors.white,
+                                                      ),
+                                                      new Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 8.0,
+                                                                  right: 8.0),
+                                                          child: new Text(
+                                                            "GO",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                                    ],
+                                                  ),
+                                                )
+                                              : RaisedButton(
+                                                  onPressed: () {
+                                                    toQueue(
+                                                        context,
+                                                        user,
+                                                        gameName,
+                                                        snaps[index]
+                                                            .documentID);
+                                                  },
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                  ),
+                                                  color: Colors.blueGrey,
+                                                  child: new Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.arrow_forward,
+                                                        color: Colors.white,
+                                                      ),
+                                                      new Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 8.0,
+                                                                  right: 8.0),
+                                                          child: new Text(
+                                                            "See status",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                                    ],
+                                                  ),
                                                 ),
-                                                new Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 8.0, right: 8.0),
-                                                    child: new Text(
-                                                      "GO",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    )),
-                                              ],
-                                            ),
-                                          )
                                         ],
                                       ),
                                     ),
@@ -309,11 +400,13 @@ class _GamePageState extends State<GamePage> {
   }
 }
 
-void toQueue(BuildContext context, FirebaseUser user, String gameName) {
+void toQueue(BuildContext context, FirebaseUser user, String gameName,
+    String documentId) {
   Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => PlayGamePage(user: user, gameName: gameName),
+          builder: (context) => PlayGamePage(
+              user: user, gameName: gameName, documentId: documentId),
           fullscreenDialog: true));
 }
 

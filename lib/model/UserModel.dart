@@ -45,7 +45,8 @@ class UserModel {
     this._disputeWin = obj['dispute_win'];
     this._disputeLoss = obj['dispute_loss'];
     this._xp = obj['xp'];
-    this._history = obj['history'];
+    var historyList = obj['history'];
+    this._history = new List<String>.from(historyList);
   }
 
   String get name => _name;

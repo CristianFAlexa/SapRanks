@@ -56,6 +56,7 @@ class _EditGamePageState extends State<EditGamePage> {
     if(_name != null){
       documentSnapshot.reference.updateData({'name': _name});
     }
+    Navigator.of(context).pop();
   }
 
   @override
