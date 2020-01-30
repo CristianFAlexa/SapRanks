@@ -17,6 +17,7 @@ class MenuListTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
+            color: Colors.black45,
               border: Border(
                   bottom: BorderSide(color: Colors.black)
               )

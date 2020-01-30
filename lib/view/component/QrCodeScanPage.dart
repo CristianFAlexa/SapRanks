@@ -46,23 +46,16 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
                       if (qrText != null) {
                         final List<String> qrList = qrText.split(" ");
                         List<String> players;
-                        queueCollectionReference
-                            .document(qrList[0])
-                            .collection('active')
-                            .document(qrList[1])
-                            .get()
-                            .then((snap) {
+                        queueCollectionReference.document(qrList[0]).collection('active').document(qrList[1]).get().then((snap) {
                           setState(() {
-                            players =
-                            new List<String>.from(snap.data['players']);
+                            players = new List<String>.from(snap.data['players']);
                             players.add(user.uid);
                           });
                           queueCollectionReference
                               .document(qrList[0])
                               .collection('active')
                               .document(qrList[1])
-                              .updateData(
-                              {'players': FieldValue.arrayUnion(players)});
+                              .updateData({'players': FieldValue.arrayUnion(players)});
                         });
                       }
                       Navigator.of(context).pop();
@@ -82,8 +75,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
                             padding: EdgeInsets.only(left: 10.0, right: 10.0),
                             child: new Text(
                               "ok",
-                              style: TextStyle(
-                                  color: Colors.white, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             )),
                       ],
                     ),

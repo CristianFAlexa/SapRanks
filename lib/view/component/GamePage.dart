@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bored/model/QueueModel.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/component/CreateQueue.dart';
+import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/component/QrCodeGenPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,21 +13,20 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'PlayGamePage.dart';
 
 class GamePage extends StatefulWidget {
-  GamePage({this.user, this.gameName});
+  GamePage({this.user, this.gameDetails});
 
   final FirebaseUser user;
-  final String gameName;
+  final DocumentSnapshot gameDetails;
 
   @override
-  _GamePageState createState() =>
-      _GamePageState(user: user, gameName: gameName);
+  _GamePageState createState() => _GamePageState(user: user, gameDetails: gameDetails);
 }
 
 class _GamePageState extends State<GamePage> {
-  _GamePageState({this.user, this.gameName});
+  _GamePageState({this.user, this.gameDetails});
 
   final FirebaseUser user;
-  final String gameName;
+  final DocumentSnapshot gameDetails;
 
   List<QueueModel> items;
   StreamSubscription<QuerySnapshot> queues;
@@ -37,15 +37,12 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     items = new List();
     queues?.cancel();
-    queues = queueCollectionReference
-        .document(gameName)
-        .collection('active')
-        .snapshots()
-        .listen((QuerySnapshot snapshot) {
+    queues = queueCollectionReference.document(gameDetails.data['name']).collection('active').snapshots().listen((QuerySnapshot snapshot) {
+      if (!mounted) {
+        return;
+      }
       final List<DocumentSnapshot> queueSnaps = snapshot.documents;
-      final List<QueueModel> queueModels = snapshot.documents
-          .map((documentSnapshot) => QueueModel.fromMap(documentSnapshot.data))
-          .toList();
+      final List<QueueModel> queueModels = snapshot.documents.map((documentSnapshot) => QueueModel.fromMap(documentSnapshot.data)).toList();
       setState(() {
         snaps = queueSnaps;
         this.items = queueModels;
@@ -56,24 +53,22 @@ class _GamePageState extends State<GamePage> {
 
   void addUserToList(int index, String listName) {
     List<String> players;
-    queueCollectionReference
-        .document(gameName)
-        .collection('active')
-        .document(snaps[index].documentID)
-        .get()
-        .then((snap) {
+    queueCollectionReference.document(gameDetails.data['name']).collection('active').document(snaps[index].documentID).get().then((snap) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         var tmpList = new List<String>.from(snap.data[listName]);
-        tmpList.removeWhere( (item) => item == null);
+        tmpList.removeWhere((item) => item == null);
         players = tmpList;
         players.add(user.uid);
       });
       queueCollectionReference
-          .document(gameName)
+          .document(gameDetails.data['name'])
           .collection('active')
           .document(snaps[index].documentID)
           .updateData({listName: FieldValue.arrayUnion(players)});
-      toQueue(context, user, gameName, snaps[index].documentID);
+      toQueue(context, user, gameDetails.data['name'], snaps[index], gameDetails);
     });
   }
 
@@ -83,20 +78,16 @@ class _GamePageState extends State<GamePage> {
         builder: (BuildContext context) {
           //Here we will build the content of the dialog
           return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10)), // RoundedRectangleBorder,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // RoundedRectangleBorder,
               title: Text(
                 "Choose a team",
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
               actions: <Widget>[
                 FlatButton(
                   child: Text(
                     "Blue team",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.blue),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                   onPressed: () {
                     addUserToList(index, 'players');
@@ -106,9 +97,8 @@ class _GamePageState extends State<GamePage> {
                 ),
                 FlatButton(
                   child: Text(
-                    "Red team",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red),
+                    "Green team",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
                   ),
                   onPressed: () {
                     addUserToList(index, 'players');
@@ -123,38 +113,21 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: true,
       appBar: GradientAppBar(
-        gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.black]),
-        automaticallyImplyLeading: true,
+        title: Text(
+          "${gameDetails.data['name']} events",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black, Colors.black]),
+        automaticallyImplyLeading: false,
         actions: <Widget>[
-          Center(
-            child: RaisedButton(
-              onPressed: () => toCreateQueue(context, user, gameName),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              color: Colors.transparent,
-              child: new Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.accessibility_new,
-                    color: Colors.white,
-                  ),
-                  new Container(
-                      padding: EdgeInsets.only(left: 10.0, right: 110.0),
-                      child: new Text(
-                        "Create new event",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      )),
-                ],
-              ),
-            ),
-          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true));
+            },
+            icon: Icon(Icons.home),
+          )
         ],
       ),
       body: new Column(
@@ -166,262 +139,182 @@ class _GamePageState extends State<GamePage> {
               child: ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onDoubleTap: () =>
-                        toQrCode(context, snaps[index].documentID, gameName),
-                    child: Stack(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 190.0,
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                              child: Material(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
+                  return (snaps[index] == null)
+                      ? SizedBox()
+                      : GestureDetector(
+                          onDoubleTap: () => toQrCode(context, snaps[index].documentID, gameDetails.data['name']),
+                          onTap: () {
+                            if (!items[index].players.contains(user.uid))
+                              showChooseTeamDialog(context, index);
+                            else
+                              toQueue(context, user, gameDetails.data['name'], snaps[index], gameDetails);
+                          },
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: ListTile(
+                                  title: Text("Are you sure you want to delete the event?"),
                                 ),
-                                color: Colors.white,
-                                elevation: 14.0,
-                                shadowColor: Colors.black,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(5),
-                                        bottomRight: Radius.circular(5),
-                                        topLeft: Radius.circular(5),
-                                        topRight: Radius.circular(5),
-                                      ),
-                                      image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: AssetImage(
-                                              "assets/images/spaceman.jpg"))),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Column(
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    onPressed: () => {
+                                      if (snaps[index].data['creator'] == user.uid)
+                                        queueCollectionReference
+                                            .document(gameDetails.data['name'])
+                                            .collection('active')
+                                            .document(snaps[index].documentID)
+                                            .delete(),
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(gameDetails.data['picture']),
+                                  ),
+                                ),
+                                height: MediaQuery.of(context).size.height / 3.5,
+                              ),
+                              Container(
+                                color: Colors.blueGrey[900],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
                                         children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                "$gameName",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .display1
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        backgroundColor:
-                                                            Colors.black26),
-                                              ),
-                                            ],
+                                          Text(
+                                            "${gameDetails.data['name']}",
+                                            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                "${items[index].description}",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .display1
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        backgroundColor:
-                                                            Colors.black26,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
+                                          SizedBox(
+                                            width: 25,
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                "${items[index].location}",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .display1
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        backgroundColor:
-                                                            Colors.black26,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
+                                          Text(
+                                            "${gameDetails.data['xp']} ",
+                                            style: TextStyle(color: Colors.white, fontSize: 16),
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                "${items[index].eventDate.toDate()}",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .display1
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        backgroundColor:
-                                                            Colors.black26,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.white,
+                                            size: 16,
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                "Players enrolled ${items[index].players.length}",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .display1
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        backgroundColor:
-                                                            Colors.black26,
-                                                        fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                          (!items[index]
-                                                  .players
-                                                  .contains(user.uid))
-                                              ? RaisedButton(
-                                                  onPressed: () {
-                                                    showChooseTeamDialog(
-                                                        context, index);
-                                                  },
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0),
-                                                  ),
-                                                  color: Colors.blueGrey,
-                                                  child: new Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.arrow_forward,
-                                                        color: Colors.white,
-                                                      ),
-                                                      new Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 8.0,
-                                                                  right: 8.0),
-                                                          child: new Text(
-                                                            "GO",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          )),
-                                                    ],
-                                                  ),
-                                                )
-                                              : RaisedButton(
-                                                  onPressed: () {
-                                                    toQueue(
-                                                        context,
-                                                        user,
-                                                        gameName,
-                                                        snaps[index]
-                                                            .documentID);
-                                                  },
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5.0),
-                                                  ),
-                                                  color: Colors.blueGrey,
-                                                  child: new Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.arrow_forward,
-                                                        color: Colors.white,
-                                                      ),
-                                                      new Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 8.0,
-                                                                  right: 8.0),
-                                                          child: new Text(
-                                                            "See status",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          )),
-                                                    ],
-                                                  ),
-                                                ),
                                         ],
                                       ),
-                                    ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            "Description: ${items[index].description}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .display1
+                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
+                                          ),
+                                          Icon(
+                                            Icons.description,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            "Location: ${items[index].location}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .display1
+                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
+                                          ),
+                                          Icon(
+                                            Icons.location_on,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            "Date: ${items[index].eventDate.toDate()}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .display1
+                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
+                                          ),
+                                          Icon(
+                                            Icons.date_range,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            "Players enrolled ${items[index].players.length}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .display1
+                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
+                                          ),
+                                          Icon(
+                                            Icons.people,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                        );
                 },
               ),
             ),
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: "floatingButton2",
+        onPressed: () => toCreateQueue(context, user, gameDetails.data['name']),
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 }
 
-void toQueue(BuildContext context, FirebaseUser user, String gameName,
-    String documentId) {
+void toQueue(BuildContext context, FirebaseUser user, String gameName, DocumentSnapshot document, DocumentSnapshot gameDetails) {
   Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => PlayGamePage(
-              user: user, gameName: gameName, documentId: documentId),
-          fullscreenDialog: true));
+        builder: (context) => PlayGamePage(user: user, gameName: gameName, document: document, gameDetails: gameDetails),
+      ));
 }
 
 void toCreateQueue(BuildContext context, FirebaseUser user, String gameName) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CreateQueue(user: user, gameName: gameName),
-          fullscreenDialog: true));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQueue(user: user, gameName: gameName), fullscreenDialog: true));
 }
 
 void toQrCode(BuildContext context, String documentId, String gameName) {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => QrCodeGenPage(documentId, gameName),
-          fullscreenDialog: true));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => QrCodeGenPage(documentId, gameName), fullscreenDialog: true));
 }

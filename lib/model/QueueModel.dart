@@ -9,14 +9,17 @@ class QueueModel {
   String _location;
   String _description;
   String _creator;
-
   List<String> _blueTeam;
   List<String> _redTeam;
+  String _gameName;
+  bool _settled;
 
-  QueueModel(this._createdAt, this._players, this._minPlayers, this._maxPlayers,
-      this._eventDate, this._location, this._description, this._creator,
-      this._blueTeam, this._redTeam
-      );
+  QueueModel(this._createdAt, this._players, this._minPlayers, this._maxPlayers, this._eventDate, this._location, this._description, this._creator,
+      this._blueTeam, this._redTeam, this._gameName, this._settled);
+
+  bool get settled => _settled;
+
+  String get gameName => _gameName;
 
   List<String> get redTeam => _redTeam;
 
@@ -38,19 +41,6 @@ class QueueModel {
 
   Timestamp get createdAt => _createdAt;
 
-  QueueModel.map(dynamic obj) {
-    this._createdAt = obj['created_at'];
-    this._players = obj['players'];
-    this._maxPlayers = obj['max_players'];
-    this._minPlayers = obj['min_players'];
-    this._description = obj['description'];
-    this._eventDate = obj['event_date'];
-    this._location = obj['location'];
-    this._creator = obj['creator'];
-    this._redTeam = obj['red_team'];
-    this._blueTeam = obj['blue_team'];
-  }
-
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
     map['created_at'] = this._createdAt;
@@ -63,6 +53,8 @@ class QueueModel {
     map['creator'] = this._creator;
     map['red_team'] = this._redTeam;
     map['blue_team'] = this._blueTeam;
+    map['game_name'] = this._gameName;
+    map['settled'] = this._settled;
     return map;
   }
 
@@ -76,11 +68,11 @@ class QueueModel {
     this._location = map['location'];
     this._eventDate = map['event_date'];
     this._creator = map['creator'];
-
     var redTeamList = map['red_team'];
     this._redTeam = new List<String>.from(redTeamList);
-
     var blueTeamList = map['blue_team'];
     this._blueTeam = new List<String>.from(blueTeamList);
+    this._gameName = map['game_name'];
+    this._settled = map['settled'];
   }
 }

@@ -8,10 +8,10 @@ class MessageNotification extends StatefulWidget {
 }
 
 class _MessageNotificationState extends State<MessageNotification> {
- final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
- final List<Message> messages = [];
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final List<Message> messages = [];
 
- @override
+  @override
   void initState() {
     super.initState();
     _firebaseMessaging.configure(
@@ -19,32 +19,44 @@ class _MessageNotificationState extends State<MessageNotification> {
         print("onMessage: $message");
         final notification = message['notification'];
         setState(() {
-          messages.add(Message(
-            title: notification['title'], body: notification['body']
-          ));
+          messages.add(Message(title: notification['title'], body: notification['body']));
         });
-
-       // _showItemDialog(message);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: ListTile(
+              title: Text(message['notification']['title']),
+              subtitle: Text(message['notification']['body']),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+        // _showItemDialog(message);
       },
       //onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-       // _navigateToItemDetail(message);
+        // _navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-       // _navigateToItemDetail(message);
+        // _navigateToItemDetail(message);
       },
     );
   }
 
   Widget buildMessage(Message message) => ListTile(
-      title: Text(message.title),
-      subtitle: Text(message.body),
-  );
+        title: Text(message.title),
+        subtitle: Text(message.body),
+      );
 
   @override
   Widget build(BuildContext context) => ListView(
-    children: messages.map(buildMessage).toList(),
-  );
+        children: messages.map(buildMessage).toList(),
+      );
 }

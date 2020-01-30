@@ -16,6 +16,7 @@ class GameHistoryTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
+              color: Colors.black54,
               border: Border(bottom: BorderSide(color: Colors.grey))),
           height: 50,
           child: Row(

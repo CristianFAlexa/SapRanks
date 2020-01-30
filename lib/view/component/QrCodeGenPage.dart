@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class QrCodeGenPage extends StatelessWidget {
   QrCodeGenPage(this.documentId, this.gameName);
+
   final String documentId;
   final String gameName;
 
@@ -16,15 +17,8 @@ class QrCodeGenPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-/*            Text(
-              "Encoded with : \n $gameName $documentId",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-              ),
-            ),*/
             QrImage(
-              data: gameName+" "+documentId,
+              data: gameName + " " + documentId,
               gapless: true,
               size: 400,
               errorCorrectionLevel: QrErrorCorrectLevel.H,

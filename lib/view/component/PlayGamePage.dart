@@ -1,5 +1,5 @@
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/component/GamePage.dart';
+import 'package:bored/view/component/PlayPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,32 +7,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
-class PlayGamePage extends StatefulWidget {
-  PlayGamePage({this.user, this.gameName, this.documentId});
+import '../setup/MainPage.dart';
 
-  final String documentId;
+class PlayGamePage extends StatefulWidget {
+  PlayGamePage({this.user, this.gameName, this.document, this.gameDetails});
+
+  final DocumentSnapshot document;
   final FirebaseUser user;
   final String gameName;
+  final DocumentSnapshot gameDetails;
 
   @override
-  _PlayGamePageState createState() => _PlayGamePageState(
-      user: user, gameName: gameName, documentId: documentId);
+  _PlayGamePageState createState() => _PlayGamePageState(user: user, gameName: gameName, document: document, gameDetails: gameDetails);
 }
 
 class _PlayGamePageState extends State<PlayGamePage> {
-  _PlayGamePageState({this.user, this.gameName, this.documentId});
+  _PlayGamePageState({this.user, this.gameName, this.document, this.gameDetails});
 
   var time = new Duration();
-  final String documentId;
+  final DocumentSnapshot document;
   final FirebaseUser user;
   final String gameName;
+  final DocumentSnapshot gameDetails;
+
+  var disputeWin;
+  var disputeLoss;
+  var xp;
 
   void removeUserFromList(String listName) async {
-    await queueCollectionReference
-        .document(gameName)
-        .collection('active')
-        .document(documentId)
-        .updateData({
+    await queueCollectionReference.document(gameName).collection('active').document(document.documentID).updateData({
       listName: FieldValue.arrayRemove([user.uid])
     });
   }
@@ -42,110 +45,116 @@ class _PlayGamePageState extends State<PlayGamePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10)), // RoundedRectangleBorder,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // RoundedRectangleBorder,
               title: Text(
                 "Who won?",
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
               actions: <Widget>[
                 FlatButton(
                   child: Text(
                     "Blue team",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.blue),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                   onPressed: () {
                     List<String> bluePlayers = new List<String>();
                     List<String> redPlayers = new List<String>();
-                    queueCollectionReference
-                        .document(gameName)
-                        .collection('active')
-                        .document(documentId)
-                        .get()
-                        .then((snap) {
+                    queueCollectionReference.document(gameName).collection('active').document(document.documentID).get().then((snap) {
+                      if (!mounted) return;
                       setState(() {
-                        bluePlayers =
-                            new List<String>.from(snap.data['blue_team']);
-                        redPlayers =
-                            new List<String>.from(snap.data['red_team']);
+                        bluePlayers = new List<String>.from(snap.data['blue_team']);
+                        redPlayers = new List<String>.from(snap.data['red_team']);
                         bluePlayers.forEach((player) => {
-                          collectionReference.document(player).updateData({
-                            'history': FieldValue.arrayUnion(["$gameName win"])
-                          })
-                        });
+                              if (player != null)
+                                {
+                                  collectionReference.document(player).get().then((blue) {
+                                    disputeWin = blue.data['dispute_win'] + 1;
+                                    xp = blue.data['xp'] + gameDetails.data['xp'];
+                                  }).then((function) {
+                                    collectionReference.document(player).updateData({
+                                      'history': FieldValue.arrayUnion(["$gameName win ${Timestamp.now()}"]),
+                                      'xp': xp,
+                                      'dispute_win': disputeWin
+                                    });
+                                  })
+                                }
+                            });
                         redPlayers.forEach((player) => {
-                          collectionReference.document(player).updateData({
-                            'history': FieldValue.arrayUnion(["$gameName lose"])
-                          })
-                        });
+                              if (player != null)
+                                {
+                                  collectionReference.document(player).get().then((red) {
+                                    disputeLoss = red.data['dispute_loss'] + 1;
+                                  }).then((function) {
+                                    collectionReference.document(player).updateData({
+                                      'history': FieldValue.arrayUnion(["$gameName lose ${Timestamp.now()}"]),
+                                      'dispute_loss': disputeLoss
+                                    });
+                                  })
+                                }
+                            });
+                        queueCollectionReference.document(gameName).collection('active').document(document.documentID).updateData({'settled': true});
                         Navigator.of(context).pop();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => GamePage(
-                                  gameName: gameName, user: user,
-                                ),
-                                fullscreenDialog: true));
+                                builder: (context) => PlayPage(
+                                      user: user,
+                                    )));
                       });
                     });
-                    queueCollectionReference
-                        .document(gameName)
-                        .collection('active')
-                        .document(
-                        documentId)
-                        .delete();
-
                   },
                 ),
                 FlatButton(
                   child: Text(
-                    "Red team",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red),
+                    "Green team",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
                   ),
                   onPressed: () {
                     List<String> bluePlayers = new List<String>();
                     List<String> redPlayers = new List<String>();
-                    queueCollectionReference
-                        .document(gameName)
-                        .collection('active')
-                        .document(documentId)
-                        .get()
-                        .then((snap) {
+                    queueCollectionReference.document(gameName).collection('active').document(document.documentID).get().then((snap) {
+                      if (!mounted) return;
                       setState(() {
-                        bluePlayers =
-                        new List<String>.from(snap.data['blue_team']);
-                        redPlayers =
-                        new List<String>.from(snap.data['red_team']);
+                        bluePlayers = new List<String>.from(snap.data['blue_team']);
+                        redPlayers = new List<String>.from(snap.data['red_team']);
                         bluePlayers.forEach((player) => {
-                          collectionReference.document(player).updateData({
-                            'history': FieldValue.arrayUnion(["$gameName lose"])
-                          })
-                        });
+                              if (player != null)
+                                {
+                                  collectionReference.document(player).get().then((blue) {
+                                    disputeLoss = blue.data['dispute_loss'] + 1;
+                                  }).then((function) {
+                                    collectionReference.document(player).updateData({
+                                      'history': FieldValue.arrayUnion(["$gameName lose ${Timestamp.now()}"]),
+                                      'dispute_loss': disputeLoss
+                                    });
+                                  })
+                                }
+                            });
                         redPlayers.forEach((player) => {
-                          collectionReference.document(player).updateData({
-                            'history': FieldValue.arrayUnion(["$gameName win"])
-                          })
-                        });
+                              if (player != null)
+                                {
+                                  collectionReference.document(player).get().then((red) {
+                                    disputeWin = red.data['dispute_win'] + 1;
+                                    xp = red.data['xp'] + gameDetails.data['xp'];
+                                  }).then((function) {
+                                    collectionReference.document(player).updateData({
+                                      'history': FieldValue.arrayUnion(["$gameName win ${Timestamp.now()}"]),
+                                      'xp': xp,
+                                      'dispute_win': disputeWin
+                                    });
+                                  })
+                                }
+                            });
+                        queueCollectionReference.document(gameName).collection('active').document(document.documentID).updateData({'settled': true});
                         Navigator.of(context).pop();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => GamePage(
-                                  gameName: gameName, user: user,
-                                ),
-                                fullscreenDialog: true));
+                                builder: (context) => PlayPage(
+                                      user: user,
+                                    )));
                       });
                     });
-                    queueCollectionReference
-                        .document(gameName)
-                        .collection('active')
-                        .document(
-                        documentId)
-                        .delete();
                   },
                 )
               ]);
@@ -160,22 +169,19 @@ class _PlayGamePageState extends State<PlayGamePage> {
                     (item == null)
                         ? SizedBox()
                         : StreamBuilder(
-                            stream:
-                                collectionReference.document(item).snapshots(),
+                            stream: collectionReference.document(item).snapshots(),
                             builder: (context, snapshot) {
                               return (snapshot.data == null)
                                   ? SizedBox()
                                   : Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 8.0, bottom: 8.0),
+                                      padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                                       child: Material(
                                         color: Colors.transparent,
                                         child: Center(
                                           child: Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: <Widget>[
                                                 SizedBox(
                                                   width: 100,
@@ -187,19 +193,13 @@ class _PlayGamePageState extends State<PlayGamePage> {
                                                       shape: BoxShape.circle,
                                                       image: DecorationImage(
                                                           fit: BoxFit.cover,
-                                                          image: (snapshot.data[
-                                                                      'profile_picture'] ==
-                                                                  null)
-                                                              ? AssetImage(
-                                                                  "assets/images/default-profile-picture.png")
-                                                              : NetworkImage(
-                                                                  snapshot.data[
-                                                                      'profile_picture']))),
+                                                          image: (snapshot.data['profile_picture'] == null)
+                                                              ? AssetImage("assets/images/default-profile-picture.png")
+                                                              : NetworkImage(snapshot.data['profile_picture']))),
                                                 ),
                                                 Text(
                                                   "   ${snapshot.data['name']}",
-                                                  style:
-                                                      TextStyle(fontSize: 12.0),
+                                                  style: TextStyle(fontSize: 12.0),
                                                 ),
                                               ],
                                             ),
@@ -214,161 +214,170 @@ class _PlayGamePageState extends State<PlayGamePage> {
             .toList());
   }
 
+  void changeTeam(String teamName) async {
+    if (teamName == 'red_team') {
+      removeUserFromList('blue_team');
+    } else if (teamName == 'blue_team') {
+      removeUserFromList('red_team');
+    }
+    await queueCollectionReference.document(gameName).collection('active').document(document.documentID).updateData({
+      teamName: FieldValue.arrayUnion([user.uid])
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: queueCollectionReference
-            .document(gameName)
-            .collection('active')
-            .document(documentId)
-            .snapshots(),
+        stream: queueCollectionReference.document(gameName).collection('active').document(document.documentID).snapshots(),
         builder: (context, snapshot) {
-          return (snapshot.data == null)
+          return (snapshot.data == null || !snapshot.data.exists)
               ? Text("Loading..")
               : Scaffold(
                   appBar: GradientAppBar(
                     title: Center(
                       child: Text("Queue"),
                     ),
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black87,
-                          Colors.black38,
-                          Colors.black12
-                        ]),
-                    automaticallyImplyLeading: true,
+                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.black38, Colors.black12]),
+                    automaticallyImplyLeading: false,
                   ),
-                  body: Container(
+                  body: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(
-                          height: 20,
-                        ),
                         Center(
-                          child: Text(
-                            "${snapshot.data['players'].length}/${snapshot.data['max_players']} players",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              "${snapshot.data['players'].length} of ${snapshot.data['max_players']} players",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.black))),
-                        ),
-                        Text('Blue team'),
-                        getTextWidgets(snapshot.data['blue_team']),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.black))),
-                        ),
-                        Text('Red team'),
-                        getTextWidgets(snapshot.data['red_team']),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.black))),
-                        ),
-                        SizedBox(
-                          height: 50,
+                        GestureDetector(
+                          onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('red_team')},
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                                gradient: LinearGradient(begin: Alignment.topCenter, colors: [Colors.green[200], Colors.green[500], Colors.green[800]])),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Green team',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                getTextWidgets(snapshot.data['red_team']),
+                              ],
+                            ),
+                          ),
                         ),
                         Center(
-                          child: (!snapshot.data['event_date']
-                                  .toDate()
-                                  .difference(Timestamp.now().toDate())
-                                  .isNegative) ?
-
-                          Column( children: <Widget>[
-                           CountdownFormatted(
-                                  duration: snapshot.data['event_date']
-                                      .toDate()
-                                      .difference(
-                                          snapshot.data['created_at'].toDate()),
-                                  builder:
-                                      (BuildContext ctx, String remaining) {
-                                    return Text(
-                                      "Game starts in $remaining",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25),
-                                    );
-                                  },
+                          child: Text(
+                            "VS",
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('blue_team')},
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20),
                                 ),
-                            RaisedButton(
-                              onPressed: () => {
-                                removeUserFromList('red_team'),
-                                removeUserFromList('blue_team'),
-                                removeUserFromList('players'),
-                                Navigator.of(context).pop()
-                              },
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              color: Colors.blueGrey,
-                              child: new Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.accessible_forward,
-                                    color: Colors.white,
-                                  ),
-                                  new Container(
-                                      padding:
-                                      EdgeInsets.only(left: 8.0, right: 8.0),
-                                      child: new Text(
-                                        "Leave event",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      )),
-                                ],
-                              ),
+                                gradient: LinearGradient(end: Alignment.topCenter, colors: [Colors.blue[200], Colors.blue[500], Colors.blue[800]])),
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Blue team',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                getTextWidgets(snapshot.data['blue_team']),
+                              ],
                             ),
-                          ],)
-                              : (snapshot.data['creator'] == user.uid)
-                                  ? RaisedButton(
-                                      onPressed: () => {
-                                        showChooseWinnerDialog(context),
+                          ),
+                        ),
+                        Center(
+                          child: (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative)
+                              ? Column(
+                                  children: <Widget>[
+                                    CountdownFormatted(
+                                      duration: snapshot.data['event_date'].toDate().difference(snapshot.data['created_at'].toDate()),
+                                      builder: (BuildContext ctx, String remaining) {
+                                        return Text(
+                                          "Game starts in $remaining",
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                                        );
                                       },
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: FloatingActionButton(
+                                          heroTag: "floatingButton4",
+                                          onPressed: () => {
+                                            removeUserFromList('red_team'),
+                                            removeUserFromList('blue_team'),
+                                            removeUserFromList('players'),
+                                            Navigator.of(context).pop()
+                                          },
+                                          child: Icon(Icons.exit_to_app),
+                                          backgroundColor: Colors.red,
+                                        ),
                                       ),
-                                      color: Colors.blueGrey,
-                                      child: new Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                          ),
-                                          new Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 8.0, right: 8.0),
-                                              child: new Text(
-                                                "Delete event",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                        ],
+                                    ),
+                                  ],
+                                )
+                              : (snapshot.data['creator'] == user.uid && snapshot.data['settled'] == false)
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: FloatingActionButton(
+                                          heroTag: "floatingButton5",
+                                          onPressed: () => {
+                                            showChooseWinnerDialog(context),
+                                          },
+                                          child: Icon(Icons.thumbs_up_down),
+                                          backgroundColor: Colors.green[700],
+                                        ),
                                       ),
                                     )
-                                  : Text("Game has been started"),
+                                  : Text("Event no longer available!"),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
+                        Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: FloatingActionButton(
+                                  heroTag: "floatingButton3",
+                                  onPressed: () =>
+                                      {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
+                                  child: Icon(Icons.home),
+                                  backgroundColor: Colors.blueGrey[900],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
-                  ),
-                );
+                  ));
         });
   }
 }

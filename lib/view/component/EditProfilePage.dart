@@ -51,8 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       String fileName;
       if (_image != null) {
         fileName = basename(_image.path);
-        StorageReference storageReference =
-            FirebaseStorage.instance.ref().child(fileName);
+        StorageReference storageReference = FirebaseStorage.instance.ref().child(fileName);
         StorageUploadTask uploadTask = storageReference.putFile(_image);
         StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
         String downloadUrl = await taskSnapshot.ref.getDownloadURL();
@@ -60,226 +59,200 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _downloadUrl = downloadUrl;
           print("Profile picture uploaded.");
         });
-        collectionReference
-            .document(user.uid)
-            .updateData({'profile_picture': _downloadUrl});
+        collectionReference.document(user.uid).updateData({'profile_picture': _downloadUrl});
       } else {
-        Scaffold.of(context).showSnackBar(new SnackBar(
-            content: new Text('You did not choose a profile picture.')));
+        Scaffold.of(context).showSnackBar(new SnackBar(content: new Text('You did not choose a profile picture.')));
         Navigator.of(context).pop();
       }
-
       _formState.save();
+
       if (_name != null) {
         collectionReference.document(user.uid).updateData({'name': _name});
         _editNameState = !_editNameState;
-      } else {
-        Scaffold.of(context).showSnackBar(
-            new SnackBar(content: new Text('You did not choose a new name.')));
-      }
+      } else
+        Scaffold.of(context).showSnackBar(new SnackBar(content: new Text('You did not choose a new name.')));
     }
 
     return Scaffold(
         appBar: GradientAppBar(
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                Color.fromRGBO(255, 90, 0, 1),
-                Color.fromRGBO(236, 32, 77, 1)
-              ]),
+          gradient:
+              LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
         ),
         body: Form(
           key: _formKey,
           child: StreamBuilder(
               stream: collectionReference.document(user.uid).snapshots(),
               builder: (context, snapshot) {
-                return (snapshot.data == null)? Text("Loading..") : Builder(
-                  builder: (context) => Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            SizedBox(
-                              width: 25,
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: CircleAvatar(
-                                radius: 80,
-                                backgroundColor: Color.fromRGBO(255, 90, 0, 1),
-                                child: ClipOval(
-                                  child: SizedBox(
-                                    width: 150.0,
-                                    height: 150.0,
-                                    child: (_image != null)
-                                        ? Image.file(
-                                            _image,
-                                            fit: BoxFit.fill,
-                                          )
-                                        : (snapshot.data['profile_picture'] !=
-                                                null)
-                                            ? Image.network(
-                                                "${snapshot.data['profile_picture']}",
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.asset(
-                                                "assets/images/default-profile-picture.png",
-                                                fit: BoxFit.cover,
-                                              ),
+                return (snapshot.data == null)
+                    ? Text("Loading..")
+                    : Builder(
+                        builder: (context) => Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 25,
                                   ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 60.0),
-                              child: IconButton(
-                                icon: Icon(
-                                  FontAwesomeIcons.camera,
-                                  size: 30.0,
-                                ),
-                                onPressed: () {
-                                  getImage();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                child: Column(
-                                  children: <Widget>[
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Username",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18.0),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: CircleAvatar(
+                                      radius: 80,
+                                      backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+                                      child: ClipOval(
+                                        child: SizedBox(
+                                          width: 150.0,
+                                          height: 150.0,
+                                          child: (_image != null)
+                                              ? Image.file(
+                                                  _image,
+                                                  fit: BoxFit.fill,
+                                                )
+                                              : (snapshot.data['profile_picture'] != null)
+                                                  ? Image.network(
+                                                      "${snapshot.data['profile_picture']}",
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.asset(
+                                                      "assets/images/default-profile-picture.png",
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                        ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: (_editNameState)
-                                          ? Text(
-                                              "${snapshot.data['name']}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold),
-                                            )
-                                          : Container(
-                                              padding: EdgeInsets.only(
-                                                  top: 10, left: 45),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Container(
-                                                    width: 250,
-                                                    height: 40,
-                                                    padding: EdgeInsets.only(
-                                                        top: 4,
-                                                        left: 16,
-                                                        right: 16,
-                                                        bottom: 4),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    5)),
-                                                        color: Colors.white,
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                              color:
-                                                                  Colors.black,
-                                                              blurRadius: 2)
-                                                        ]),
-                                                    child: TextFormField(
-                                                      // ignore: missing_return
-                                                      onSaved: (input) =>
-                                                          _name = input,
-                                                      decoration: InputDecoration(
-                                                          icon:
-                                                              Icon(Icons.input),
-                                                          hintText:
-                                                              '${snapshot.data['name']}'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 60.0),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        FontAwesomeIcons.camera,
+                                        size: 30.0,
+                                      ),
+                                      onPressed: () {
+                                        getImage();
+                                      },
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Container(
-                                  child: IconButton(
-                                onPressed: () => setNameState(_editNameState),
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Colors.orange,
-                                ),
-                              )),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              RaisedButton(
-                                color: Colors.red,
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                elevation: 4.0,
-                                splashColor: Colors.orange,
-                                child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
-                                ),
+                                  )
+                                ],
                               ),
                               SizedBox(
-                                width: 20,
+                                height: 20.0,
                               ),
-                              RaisedButton(
-                                color: Colors.green,
-                                onPressed: () {
-                                  updateProfile(context);
-                                },
-                                elevation: 4.0,
-                                splashColor: Colors.orange,
-                                child: Text(
-                                  "Submit",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.0),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Username",
+                                              style: TextStyle(color: Colors.black, fontSize: 18.0),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: (_editNameState)
+                                                ? Text(
+                                                    "${snapshot.data['name']}",
+                                                    style: TextStyle(color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
+                                                  )
+                                                : Container(
+                                                    padding: EdgeInsets.only(top: 10, left: 45),
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        Container(
+                                                          width: 250,
+                                                          height: 40,
+                                                          padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                                                              color: Colors.white,
+                                                              boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2)]),
+                                                          child: TextFormField(
+                                                            validator: (input) {
+                                                              if (input.isEmpty) {
+                                                                return 'Chose a name!';
+                                                              }
+                                                              return null;
+                                                            },
+                                                            onSaved: (input) => _name = input,
+                                                            decoration: InputDecoration(icon: Icon(Icons.input), hintText: '${snapshot.data['name']}'),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Container(
+                                        child: IconButton(
+                                      onPressed: () => setNameState(_editNameState),
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.orange,
+                                      ),
+                                    )),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      color: Colors.red,
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      elevation: 4.0,
+                                      splashColor: Colors.orange,
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    RaisedButton(
+                                      color: Colors.green,
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate())
+                                          updateProfile(context);
+                                        else
+                                          Scaffold.of(context).showSnackBar(new SnackBar(content: new Text('You did not choose a new name.')));
+                                      },
+                                      elevation: 4.0,
+                                      splashColor: Colors.orange,
+                                      child: Text(
+                                        "Submit",
+                                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               )
                             ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
+                        ),
+                      );
               }),
         ));
   }

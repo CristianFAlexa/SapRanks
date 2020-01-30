@@ -1,0 +1,253 @@
+import 'package:bored/model/Regex.dart';
+import 'package:bored/model/UserModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+
+import 'LoginPage.dart';
+
+final db = Firestore.instance;
+
+class RegisterPage extends StatefulWidget {
+  RegisterPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  String _email, _password;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _checkPassword;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          "assets/images/spaceman.jpg",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: GradientAppBar(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black87, Colors.black38, Colors.black12]),
+            title: Text(widget.title),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                  Colors.black12,
+                  Colors.black12,
+                  Colors.black12,
+                  Colors.black26,
+                  Colors.black38,
+                ])),
+            child: Builder(
+              builder: (context) => Center(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(top: 32),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width / 1.2,
+                              height: 50,
+                              padding: EdgeInsets.only(
+                                  top: 4, left: 16, right: 16, bottom: 4),
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(color: Colors.black, blurRadius: 2)
+                                  ]),
+                              child: TextFormField(
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return 'Email required!';
+                                  } else if(!Regex.email.hasMatch(input)){
+                                    return 'Invalid email!';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (input) => _email = input,
+                                decoration: InputDecoration(
+                                    icon: Icon(Icons.mail), hintText: 'Email'),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(top: 32),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.2,
+                                    height: 50,
+                                    padding: EdgeInsets.only(
+                                        top: 4, left: 16, right: 16, bottom: 4),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.all(Radius.circular(5)),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black, blurRadius: 2)
+                                        ]),
+                                    child: TextFormField(
+                                      validator: (input) {
+                                        _checkPassword = input;
+                                        if (input.isEmpty) {
+                                          return 'Password required!';
+                                        } else if(!Regex.password.hasMatch(input)){
+                                          return 'Password not strong enough!';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (input) => _password = input,
+                                      decoration: InputDecoration(
+                                          icon: Icon(FontAwesomeIcons.key),
+                                          hintText: 'Password'),
+                                      obscureText: true,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(top: 32),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width:
+                                    MediaQuery.of(context).size.width / 1.2,
+                                    height: 50,
+                                    padding: EdgeInsets.only(
+                                      top: 4, left: 16, right: 16, bottom: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black, blurRadius: 2)
+                                      ]),
+                                    child: TextFormField(
+                                      validator: (input) {
+                                        if (input.isEmpty) {
+                                          return 'Check password required!';
+                                        } else if(_checkPassword.compareTo(input) != 0){
+                                          return 'Passwords do not match!';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (input) => _password = input,
+                                      decoration: InputDecoration(
+                                        icon: Icon(FontAwesomeIcons.key),
+                                        hintText: 'Check Password'),
+                                      obscureText: true,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      RaisedButton(
+                        onPressed: () =>{
+                          if (_formKey.currentState.validate())
+                            signUp
+                          else
+                            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Try again!")))
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        color: Color.fromRGBO(255, 90, 0, 1),
+                        child: new Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.add_box,
+                              color: Colors.white,
+                            ),
+                            new Container(
+                                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                child: new Text(
+                                  "Register",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> signUp() async {
+    final _formState = _formKey.currentState;
+    final FirebaseMessaging _fcm = FirebaseMessaging();
+    if (_formState.validate()) {
+      _formState.save();
+      try {
+        FirebaseUser user = (await FirebaseAuth.instance
+                .createUserWithEmailAndPassword(
+                    email: _email, password: _password))
+            .user;
+        user.sendEmailVerification();
+
+        await db.collection('users').document(user.uid).setData(new UserModel(
+                user.uid,
+                user.email,
+                'newbie',
+                'user_role',
+                null,
+                user.email.substring(0, 3),
+                1,
+                0,
+                0,
+                new List<String>())
+            .toJson());
+        _fcm.subscribeToTopic('games');
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginPage(
+                      title: 'Login',
+                    )));
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+}

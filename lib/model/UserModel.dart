@@ -10,17 +10,7 @@ class UserModel {
   int _xp;
   List<String> _history;
 
-  UserModel(
-      this._uid,
-      this._email,
-      this._rank,
-      this._role,
-      this._profilePicture,
-      this._name,
-      this._disputeWin,
-      this._disputeLoss,
-      this._xp,
-      this._history);
+  UserModel(this._uid, this._email, this._rank, this._role, this._profilePicture, this._name, this._disputeWin, this._disputeLoss, this._xp, this._history);
 
   Map<String, dynamic> toJson() => {
         'email': this._email,
@@ -94,8 +84,5 @@ class UserModel {
     this._disputeWin = map['dispute_win'];
     this._disputeLoss = map['dispute_loss'];
     this._xp = map['xp'];
-    // todo fix this
-//    var historyList = map['history'];
-//    this._history = new List<String>.from(historyList);
   }
 }

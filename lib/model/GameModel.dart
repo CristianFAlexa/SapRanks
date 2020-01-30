@@ -23,16 +23,6 @@ class GameModel {
 
   int get maxPlayers => _maxPlayers;
 
-  GameModel.map(dynamic obj) {
-    this._name = obj['name'];
-    this._players = obj['players'];
-    this._picture = obj['picture'];
-    this._uid = obj['uid'];
-    this._minPlayers = obj['min_players'];
-    this._maxPlayers = obj['max_players'];
-    this._xp = obj['xp'];
-  }
-
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
     map['name'] = this._name;
