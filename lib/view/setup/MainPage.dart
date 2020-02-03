@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/setup/WelcomePage.dart';
+import 'package:bored/view/setup/LoginPage.dart';
+import 'package:bored/view/widget/Cutout.dart';
 import 'package:bored/view/widget/MenuCarouselSlider.dart';
 import 'package:bored/view/widget/NewsCard.dart';
 import 'package:bored/view/widget/NewsTile.dart';
@@ -59,8 +60,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GradientAppBar(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.black38, Colors.black12])),
       drawer: Drawer(
         child: Container(
           child: ListView(
@@ -72,7 +71,7 @@ class _MainPageState extends State<MainPage> {
                       return UserAccountsDrawerHeader(
                         decoration: BoxDecoration(
                             boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 12)],
-                            image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/images/pattern.jpg"))),
+                            gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)])),
                         accountName: Text("${snapshot.data['name']}"),
                         accountEmail: Text("${snapshot.data['email']}"),
                         currentAccountPicture: Container(
@@ -155,7 +154,7 @@ class _MainPageState extends State<MainPage> {
                   () => {
                         gSignIn.signOut(),
                         print('Signed out.'),
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage(), fullscreenDialog: true))
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(), fullscreenDialog: true))
                       },
                   Icons.arrow_right,
                   Colors.grey[800],
@@ -165,8 +164,109 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
       ),
-      body: ListView(
-        children: <Widget>[new MenuCarouselSlider(snaps, user), NewsCard("Updates", Icons.update, newsTiles)],
+      body: Builder(
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+          ),
+          child: ListView(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 25, top: 20),
+                child: Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: Row(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                       IconButton(
+                        icon: Icon(Icons.menu),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                        color: Colors.white,
+                       ),
+                        InkWell(
+                         onTap: () => Scaffold.of(context).openDrawer(),
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Text(
+                              'Menu',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        Container(
+                            decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 10, right: 10),
+                              child: Container(
+                               height: 60,
+                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                 Padding(
+                                  padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                                  child: Center(
+                                   child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: Cutout(
+                                     color: Colors.white,
+                                     child: Image.asset('assets/images/rsz_spacemandraw.png'),
+                                    ),
+                                   ),
+                                  ),
+                                 ),
+                                ],
+                               ),
+                              ),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Row(
+                            children: <Widget>[
+                             IconButton(
+                              icon: Icon(Icons.info),
+                              onPressed: () {},
+                              color: Colors.white,
+                             ),
+                              Text(
+                                'Info',
+                                style: TextStyle(fontSize: 20, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                child: Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10, top: 15, left: 20),
+                      child: Text(
+                        'Welcome',
+                        style: TextStyle(fontSize: 20, color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+               color: Colors.white,
+                child: ListView(
+                  physics: ClampingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: <Widget>[new MenuCarouselSlider(snaps, user), NewsCard("Updates", Icons.update, newsTiles)],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

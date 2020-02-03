@@ -1,13 +1,15 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bored/model/QueueModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/component/CreateQueue.dart';
+import 'package:bored/view/component/CreateEventPage.dart';
 import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/component/QrCodeGenPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'PlayGamePage.dart';
@@ -112,186 +114,242 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+   MediaQueryData media = MediaQuery.of(context);
     return Scaffold(
       resizeToAvoidBottomPadding: true,
-      appBar: GradientAppBar(
-        title: Text(
-          "${gameDetails.data['name']} events",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black, Colors.black]),
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true));
-            },
-            icon: Icon(Icons.home),
-          )
-        ],
-      ),
-      body: new Column(
-        children: <Widget>[
-          Expanded(
+      body: Container(
+       decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+       ),
+        child: ListView(
+          children: <Widget>[
+           Padding(
+            padding: const EdgeInsets.only(bottom: 25, top: 20),
             child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 80,
+             color: Colors.transparent,
+             child: Center(
+              child: Row(
+               children: <Widget>[
+                FlatButton(
+                 onPressed: (){
+                  Navigator.of(context).pop();
+                 },
+                 child: Icon(Icons.arrow_back, color: Colors.white, size: 28,),
+                ),
+                Icon(Icons.event, color: Colors.white, size: 20,),
+                Padding(
+                 padding: const EdgeInsets.only(right: 10),
+                 child: Text('${items.length}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(color: Colors.white),
+                      right: BorderSide(color: Colors.white)
+                    )
+                  ),
+                  child: Padding(
+                   padding: const EdgeInsets.only(left: 10, right: 10),
+                   child: Text('Select Event', style: TextStyle(fontSize: 15, color: Colors.white),),
+                  )
+                ),
+                Padding(
+                 padding: const EdgeInsets.only(left: 10, right: 10),
+                 child: Text('${gameDetails.data['name']}',
+                  style: TextStyle(fontSize: 15, color: Colors.white), maxLines: 4, softWrap: true,
+                  overflow: TextOverflow.ellipsis,
+                 ),
+                )
+               ],
+              ),
+             ),
+            ),
+           ),
+           Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+            ),
+            child: Row(
+             children: <Widget>[
+              Padding(
+               padding: const EdgeInsets.only(bottom: 10, top: 15, left: 20),
+               child: Text('${gameDetails.data['name']}, Events', style: TextStyle( fontSize: 20, color: Colors.grey[700]),),
+              )
+             ],
+            ),
+           ),
+            Container(
               child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return (snaps[index] == null)
-                      ? SizedBox()
-                      : GestureDetector(
-                          onDoubleTap: () => toQrCode(context, snaps[index].documentID, gameDetails.data['name']),
-                          onTap: () {
-                            if (!items[index].players.contains(user.uid))
-                              showChooseTeamDialog(context, index);
-                            else
-                              toQueue(context, user, gameDetails.data['name'], snaps[index], gameDetails);
-                          },
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                content: ListTile(
-                                  title: Text("Are you sure you want to delete the event?"),
-                                ),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text(
-                                      'Delete',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    onPressed: () => {
-                                      if (snaps[index].data['creator'] == user.uid)
-                                        queueCollectionReference
-                                            .document(gameDetails.data['name'])
-                                            .collection('active')
-                                            .document(snaps[index].documentID)
-                                            .delete(),
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          child: Column(
+               physics: ClampingScrollPhysics(),
+               scrollDirection: Axis.vertical,
+               shrinkWrap: true,
+               itemCount: items.length,
+               itemBuilder: (context, index) {
+                return (snaps[index] == null)
+                       ? SizedBox()
+                       : GestureDetector(
+                 onDoubleTap: () => toQrCode(context, snaps[index].documentID, gameDetails.data['name']),
+                 onTap: () {
+                  if (!items[index].players.contains(user.uid))
+                   showChooseTeamDialog(context, index);
+                  else
+                   toQueue(context, user, gameDetails.data['name'], snaps[index], gameDetails);
+                 },
+                 onLongPress: () {
+                  if (snaps[index].data['creator'] == user.uid)
+                   showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                     content: ListTile(
+                      title: Text("Are you sure you want to delete the event?"),
+                     ),
+                     actions: <Widget>[
+                      FlatButton(
+                       child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                       ),
+                       onPressed: () => {
+                        queueCollectionReference
+                          .document(gameDetails.data['name'])
+                          .collection('active')
+                          .document(snaps[index].documentID)
+                          .delete(),
+                        Navigator.of(context).pop()
+                       },
+                      ),
+                     ],
+                    ),
+                   );
+                 },
+                 child: Container(
+                  color: Colors.white,
+                   child: Padding(
+                     padding: const EdgeInsets.all(5.0),
+                     child: Column(
+                      children: <Widget>[
+                       Container(
+                        decoration: BoxDecoration(
+                         image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(gameDetails.data['picture']),
+                         ),
+                        ),
+                        height: media.size.height / 3.5,
+                       ),
+                       Container(
+                        child: Padding(
+                         padding: const EdgeInsets.all(8.0),
+                         child: Column(
+                          children: <Widget>[
+                           Row(
                             children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(gameDetails.data['picture']),
-                                  ),
-                                ),
-                                height: MediaQuery.of(context).size.height / 3.5,
-                              ),
-                              Container(
-                                color: Colors.blueGrey[900],
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "${gameDetails.data['name']}",
-                                            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(
-                                            width: 25,
-                                          ),
-                                          Text(
-                                            "${gameDetails.data['xp']} ",
-                                            style: TextStyle(color: Colors.white, fontSize: 16),
-                                          ),
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Description: ${items[index].description}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .display1
-                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
-                                          ),
-                                          Icon(
-                                            Icons.description,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Location: ${items[index].location}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .display1
-                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
-                                          ),
-                                          Icon(
-                                            Icons.location_on,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Date: ${items[index].eventDate.toDate()}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .display1
-                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
-                                          ),
-                                          Icon(
-                                            Icons.date_range,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            "Players enrolled ${items[index].players.length}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .display1
-                                                .copyWith(color: Colors.white, fontWeight: FontWeight.bold, backgroundColor: Colors.black26, fontSize: 12),
-                                          ),
-                                          Icon(
-                                            Icons.people,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                             Text(
+                              "${gameDetails.data['name']}",
+                              style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+                             ),
+                             Spacer(),
+                             Icon(
+                              Icons.star,
+                              color:  Color.fromRGBO(236, 32, 77, 1),
+                             ),
+                             Text(
+                              "${gameDetails.data['xp']}",
+                              style: TextStyle(color:  Color.fromRGBO(236, 32, 77, 1), fontWeight: FontWeight.bold, fontSize: 24),
+                             ),
                             ],
-                          ),
-                        );
-                },
+                           ),
+                           Row(
+                            children: <Widget>[
+                             Icon(
+                              Icons.description,
+                              color: Colors.grey,
+                              size: 16,
+                             ),
+                             Text(
+                              "${items[index].description}",
+                              style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+                             ),
+                            ],
+                           ),
+                           Row(
+                            children: <Widget>[
+                             Icon(
+                              Icons.location_on,
+                              color: Colors.grey,
+                              size: 16,
+                             ),
+                             Text(
+                              "${items[index].location}",
+                              style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+                             ),
+                            ],
+                           ),
+                           Row(
+                            children: <Widget>[
+                             Icon(
+                              Icons.date_range,
+                              color: Colors.grey,
+                              size: 16,
+                             ),
+                             Text(
+                              "${items[index].eventDate.toDate()}".substring(0,19),
+                              style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+                             ),
+                             Padding(
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              child: Icon(
+                               Icons.stop,
+                               color: Colors.grey,
+                               size: 5,
+                              ),
+                             ),
+                             Icon(
+                              Icons.people,
+                              color: Colors.grey,
+                              size: 16,
+                             ),
+                             Text(
+                              "${items[index].players.length}",
+                              style: Theme.of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+                             ),
+                            ],
+                           ),
+                          ],
+                         ),
+                        ),
+                        decoration: BoxDecoration(
+                         color: Colors.white,
+                          boxShadow: [ BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                        ),
+                       ),
+                      ],
+                     ),
+                   ),
+                 ),
+                );
+               },
               ),
             ),
-          ),
-        ],
+           (items.length == 0)? Container(
+               color: Colors.white,
+               height: media.size.height / 1.2,
+           ) : SizedBox(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: "floatingButton2",
@@ -312,7 +370,7 @@ void toQueue(BuildContext context, FirebaseUser user, String gameName, DocumentS
 }
 
 void toCreateQueue(BuildContext context, FirebaseUser user, String gameName) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQueue(user: user, gameName: gameName), fullscreenDialog: true));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPage(user: user, gameName: gameName,), fullscreenDialog: true));
 }
 
 void toQrCode(BuildContext context, String documentId, String gameName) {

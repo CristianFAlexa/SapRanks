@@ -1,11 +1,11 @@
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/component/PlayPage.dart';
+import 'package:bored/view/widget/Cutout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import '../setup/MainPage.dart';
 
@@ -197,9 +197,12 @@ class _PlayGamePageState extends State<PlayGamePage> {
                                                               ? AssetImage("assets/images/default-profile-picture.png")
                                                               : NetworkImage(snapshot.data['profile_picture']))),
                                                 ),
-                                                Text(
-                                                  "   ${snapshot.data['name']}",
-                                                  style: TextStyle(fontSize: 12.0),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 10),
+                                                  child: Text(
+                                                    "${snapshot.data['name']}",
+                                                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -231,153 +234,238 @@ class _PlayGamePageState extends State<PlayGamePage> {
         stream: queueCollectionReference.document(gameName).collection('active').document(document.documentID).snapshots(),
         builder: (context, snapshot) {
           return (snapshot.data == null || !snapshot.data.exists)
-              ? Text("Loading..")
+              ? CircularProgressIndicator()
               : Scaffold(
-                  appBar: GradientAppBar(
-                    title: Center(
-                      child: Text("Queue"),
+                  body: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
                     ),
-                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.black38, Colors.black12]),
-                    automaticallyImplyLeading: false,
-                  ),
-                  body: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: ListView(
                       children: <Widget>[
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text(
-                              "${snapshot.data['players'].length} of ${snapshot.data['max_players']} players",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 25, top: 20),
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Center(
+                              child: Stack(
+                                children: <Widget>[
+                                  FlatButton(
+                                    onPressed: (){
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Icon(Icons.arrow_back, color: Colors.white, size: 28,),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(Icons.people, color: Colors.white, size: 20,),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 10),
+                                        child: Text(
+                                          "${snapshot.data['players'].length}-${snapshot.data['max_players']}",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.white
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 10, right: 10),
+                                          child: Container(
+                                            height: 60,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                                                  child: Center(
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(3),
+                                                      child: Cutout(
+                                                        color: Colors.white,
+                                                        child: Image.asset('assets/images/rsz_spacemandraw.png'),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10, right: 10),
+                                        child: Text('${gameDetails.data['name']}',
+                                          style: TextStyle(fontSize: 15, color: Colors.white), maxLines: 4, softWrap: true,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('red_team')},
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
-                                gradient: LinearGradient(begin: Alignment.topCenter, colors: [Colors.green[200], Colors.green[500], Colors.green[800]])),
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Green team',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                getTextWidgets(snapshot.data['red_team']),
-                              ],
-                            ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10, top: 15, left: 20),
+                                child: Text('${gameDetails.data['name']}, Event', style: TextStyle( fontSize: 20, color: Colors.grey[700]),),
+                              )
+                            ],
                           ),
                         ),
-                        Center(
-                          child: Text(
-                            "VS",
-                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('blue_team')},
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                ),
-                                gradient: LinearGradient(end: Alignment.topCenter, colors: [Colors.blue[200], Colors.blue[500], Colors.blue[800]])),
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Blue team',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                getTextWidgets(snapshot.data['blue_team']),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative)
-                              ? Column(
+                        Container(
+                          color: Colors.white,
+                          child: ListView(
+                            physics: ClampingScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    CountdownFormatted(
-                                      duration: snapshot.data['event_date'].toDate().difference(snapshot.data['created_at'].toDate()),
-                                      builder: (BuildContext ctx, String remaining) {
-                                        return Text(
-                                          "Game starts in $remaining",
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                                        );
-                                      },
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: FloatingActionButton(
-                                          heroTag: "floatingButton4",
-                                          onPressed: () => {
-                                            removeUserFromList('red_team'),
-                                            removeUserFromList('blue_team'),
-                                            removeUserFromList('players'),
-                                            Navigator.of(context).pop()
-                                          },
-                                          child: Icon(Icons.exit_to_app),
-                                          backgroundColor: Colors.red,
+                                    GestureDetector(
+                                      onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('red_team')},
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20),
+                                          ),
+                                          gradient: LinearGradient(begin: Alignment.topCenter, colors: [Colors.green[200], Colors.green[500], Colors.green[800]])),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Green team',
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            getTextWidgets(snapshot.data['red_team']),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ],
-                                )
-                              : (snapshot.data['creator'] == user.uid && snapshot.data['settled'] == false)
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: FloatingActionButton(
-                                          heroTag: "floatingButton5",
-                                          onPressed: () => {
-                                            showChooseWinnerDialog(context),
-                                          },
-                                          child: Icon(Icons.thumbs_up_down),
-                                          backgroundColor: Colors.green[700],
+                                    Center(
+                                      child: Text(
+                                        "VS",
+                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => {if (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative) changeTeam('blue_team')},
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(20),
+                                            bottomRight: Radius.circular(20),
+                                          ),
+                                          gradient: LinearGradient(end: Alignment.topCenter, colors: [Colors.blue[200], Colors.blue[500], Colors.blue[800]])),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Blue team',
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            getTextWidgets(snapshot.data['blue_team']),
+                                          ],
                                         ),
                                       ),
+                                    ),
+                                    Center(
+                                      child: (!snapshot.data['event_date'].toDate().difference(Timestamp.now().toDate()).isNegative)
+                                             ? Column(
+                                        children: <Widget>[
+                                          CountdownFormatted(
+                                            duration: snapshot.data['event_date'].toDate().difference(snapshot.data['created_at'].toDate()),
+                                            builder: (BuildContext ctx, String remaining) {
+                                              return Text(
+                                                "Game starts in $remaining",
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                                              );
+                                            },
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: FloatingActionButton(
+                                                heroTag: "floatingButton4",
+                                                onPressed: () => {
+                                                  removeUserFromList('red_team'),
+                                                  removeUserFromList('blue_team'),
+                                                  removeUserFromList('players'),
+                                                  Navigator.of(context).pop()
+                                                },
+                                                child: Icon(Icons.exit_to_app),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                             : (snapshot.data['creator'] == user.uid && snapshot.data['settled'] == false)
+                                               ? Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: FloatingActionButton(
+                                            heroTag: "floatingButton5",
+                                            onPressed: () => {
+                                              showChooseWinnerDialog(context),
+                                            },
+                                            child: Icon(Icons.thumbs_up_down),
+                                            backgroundColor: Colors.green[700],
+                                          ),
+                                        ),
+                                      )
+                                               : Text("Event no longer available!"),
+                                    ),
+                                    Stack(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: FloatingActionButton(
+                                              heroTag: "floatingButton3",
+                                              onPressed: () =>
+                                              {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
+                                              child: Icon(Icons.home),
+                                              backgroundColor: Colors.blueGrey[900],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     )
-                                  : Text("Event no longer available!"),
-                        ),
-                        Stack(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: FloatingActionButton(
-                                  heroTag: "floatingButton3",
-                                  onPressed: () =>
-                                      {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
-                                  child: Icon(Icons.home),
-                                  backgroundColor: Colors.blueGrey[900],
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        )
+                              Container(
+                                height: 250,
+                              )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ));
+                  ),
+          );
         });
   }
 }
+

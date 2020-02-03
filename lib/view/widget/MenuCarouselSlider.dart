@@ -49,30 +49,6 @@ class MenuCarouselSlider extends StatelessWidget {
                       image: NetworkImage(game.data['picture']),
                     ),
                   ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "${game.data['name']}",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .display1
-                                    .copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        backgroundColor: Colors.black26),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
               );
             },

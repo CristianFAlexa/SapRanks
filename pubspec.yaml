@@ -104,6 +104,9 @@ flutter:
     - assets/images/register1.jpg
     - assets/images/register2.jpg
     - assets/images/pattern.jpg
+    - assets/images/ic_launcher.png
+    - assets/images/rsz_spacemandraw.png
+    - assets/images/spacemanDraw.png
     # To add assets to your application, add an assets section, like this:
     # assets:
     #  - images/a_dot_burr.jpeg

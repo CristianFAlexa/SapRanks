@@ -1,8 +1,10 @@
 import 'package:bored/model/Regex.dart';
 import 'package:bored/model/UserModel.dart';
+import 'package:bored/view/widget/Cutout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -27,190 +29,198 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          "assets/images/spaceman.jpg",
+    return Scaffold(
+      body: Builder(
+        builder: (context) => Container(
           height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: GradientAppBar(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black87, Colors.black38, Colors.black12]),
-            title: Text(widget.title),
+          decoration: BoxDecoration(
+            gradient:
+            LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
           ),
-          body: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                  Colors.black12,
-                  Colors.black12,
-                  Colors.black12,
-                  Colors.black26,
-                  Colors.black38,
-                ])),
-            child: Builder(
-              builder: (context) => Center(
-                child: Form(
-                  key: _formKey,
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              children: <Widget>[
+                Container(
+                  height: 120,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: Cutout(
+                              color: Colors.white,
+                              child: Image.asset('assets/images/rsz_spacemandraw.png'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10) //.circular(20)
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(top: 32),
-                        child: Column(
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 40
+                        ),
+                        child: Row(
                           children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width / 1.2,
-                              height: 50,
-                              padding: EdgeInsets.only(
-                                  top: 4, left: 16, right: 16, bottom: 4),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(color: Colors.black, blurRadius: 2)
-                                  ]),
-                              child: TextFormField(
-                                validator: (input) {
-                                  if (input.isEmpty) {
-                                    return 'Email required!';
-                                  } else if(!Regex.email.hasMatch(input)){
-                                    return 'Invalid email!';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (input) => _email = input,
-                                decoration: InputDecoration(
-                                    icon: Icon(Icons.mail), hintText: 'Email'),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 32),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.2,
-                                    height: 50,
-                                    padding: EdgeInsets.only(
-                                        top: 4, left: 16, right: 16, bottom: 4),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(5)),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: Colors.black, blurRadius: 2)
-                                        ]),
-                                    child: TextFormField(
-                                      validator: (input) {
-                                        _checkPassword = input;
-                                        if (input.isEmpty) {
-                                          return 'Password required!';
-                                        } else if(!Regex.password.hasMatch(input)){
-                                          return 'Password not strong enough!';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (input) => _password = input,
-                                      decoration: InputDecoration(
-                                          icon: Icon(FontAwesomeIcons.key),
-                                          hintText: 'Password'),
-                                      obscureText: true,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 32),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width:
-                                    MediaQuery.of(context).size.width / 1.2,
-                                    height: 50,
-                                    padding: EdgeInsets.only(
-                                      top: 4, left: 16, right: 16, bottom: 4),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(5)),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black, blurRadius: 2)
-                                      ]),
-                                    child: TextFormField(
-                                      validator: (input) {
-                                        if (input.isEmpty) {
-                                          return 'Check password required!';
-                                        } else if(_checkPassword.compareTo(input) != 0){
-                                          return 'Passwords do not match!';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (input) => _password = input,
-                                      decoration: InputDecoration(
-                                        icon: Icon(FontAwesomeIcons.key),
-                                        hintText: 'Check Password'),
-                                      obscureText: true,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                            Text('Sign up details', style: TextStyle(fontWeight: FontWeight.bold),),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
+                      Padding(padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 5),
+                        child: TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Email required!';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => _password = input,
+                          decoration: InputDecoration(
+                            enabledBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            focusedBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            focusedErrorBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            prefixIcon: Icon(Icons.mail),
+                            hintText: 'user@domain.com',
+                            labelText: 'Email',
+                          ),
+                        ),
                       ),
-                      RaisedButton(
-                        onPressed: () =>{
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                        child: TextFormField(
+                          validator: (input) {
+                            _checkPassword = input;
+                            if (input.isEmpty) {
+                              return 'Password required!';
+                            } else if(!Regex.password.hasMatch(input)){
+                              return 'Invalid password!';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => _password = input,
+                          decoration: InputDecoration(
+                            enabledBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            focusedBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            focusedErrorBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            prefixIcon: Icon(FontAwesomeIcons.key),
+                            labelText: 'Password',
+                          ),
+                          obscureText: true,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                        child: TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Check password required!';
+                            } else if(_checkPassword.compareTo(input) != 0){
+                              return 'Passwords do not match!';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => _password = input,
+                          decoration: InputDecoration(
+                            enabledBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            focusedBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            focusedErrorBorder:
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            prefixIcon: Icon(FontAwesomeIcons.key),
+                            labelText: 'Password',
+                          ),
+                          obscureText: true,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () =>{
                           if (_formKey.currentState.validate())
                             signUp
                           else
                             Scaffold.of(context).showSnackBar(SnackBar(content: Text("Try again!")))
                         },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        color: Color.fromRGBO(255, 90, 0, 1),
-                        child: new Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.add_box,
-                              color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 30, bottom: 5),
+                          child: Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              boxShadow: [ BoxShadow( color: Colors.grey, offset: Offset(0,5), blurRadius: 5) ],
+                              borderRadius: BorderRadius.circular(3),
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
                             ),
-                            new Container(
-                                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                                child: new Text(
-                                  "Register",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                          ],
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.person_add,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'Register',
+                                    style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              )),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8, right: 16, top: 35),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Icon(Icons.arrow_back),
+                              Text('Back to Login')
+                            ],
+                          ),
                         ),
                       )
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -242,9 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => LoginPage(
-                      title: 'Login',
-                    )));
+                builder: (context) => LoginPage()));
       } catch (e) {
         print(e);
       }

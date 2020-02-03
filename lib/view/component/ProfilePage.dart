@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/widget/CustomAppBar.dart';
+import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/widget/GameHistoryTile.dart';
+import 'package:bored/view/widget/SimpleTile.dart';
+import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,16 +26,20 @@ class _ProfilePageState extends State<ProfilePage> {
   _ProfilePageState({this.user});
 
   final FirebaseUser user;
-  UserModel _userModel;
+  UserModel userModel;
   StreamSubscription<DocumentSnapshot> items;
   List<String> history;
+
+  double _winRate;
+  int _level;
+  String _rank;
 
   @override
   void initState() {
     super.initState();
     collectionReference.document(user.uid).get().then((docSnap) {
       setState(() {
-        _userModel = UserModel.map(docSnap.data);
+        userModel = UserModel.map(docSnap.data);
       });
     });
 
@@ -49,84 +57,249 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (userModel == null) return CircularProgressIndicator();
+    // win rate rule
+    _winRate = ((userModel.disputeWin) / (userModel.disputeWin + userModel.disputeLoss)) * 100;
+    // level rule
+    _level = ((sqrt(625 + 100 * userModel.xp) - 25) / 50).floor();
+    // rank rule
+    _rank = Rank().getRankFromLevel(_level);
     return StreamBuilder(
         stream: collectionReference.document(this.user.uid).snapshots(),
         builder: (context, snapshot) {
-          return Stack(children: <Widget>[
-            Image.asset(
-              "assets/images/spaceman.jpg",
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.cover,
-            ),
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: CustomAppBar(
-                user: user,
-                collectionReference: collectionReference,
-                userModel: _userModel,
-              ),
+          return Scaffold(
               body: StreamBuilder(
                   stream: collectionReference.document(this.user.uid).snapshots(),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return Text('Loading..');
+                        return CircularProgressIndicator();
                       default:
-                        return Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                  colors: [Colors.black87, Colors.black45, Colors.black38, Colors.black12, Colors.black12]),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    child: Column(
+                        return Stack(
+                          children: <Widget>[
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    height: 180,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                                    ),
+                                    child: Row(
                                       children: <Widget>[
-                                        Container(
-                                          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
-                                          height: 50,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Row(
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Text(
-                                                      "History",
-                                                      style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        showHistory(history),
-                                        Text(
-                                          "Contact",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        Text(
-                                          "${snapshot.data['email']}",
-                                          style: TextStyle(color: Colors.white, fontSize: 20),
+                                        IconButton(
+                                          icon: Icon(Icons.arrow_back, color: Colors.white,),
+                                          onPressed: () => {
+                                            Navigator.of(context).pop()
+                                          },
                                         ),
                                       ],
                                     ),
                                   ),
+                                  SizedBox(height: 100,),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 32),
+                                              child: Container(
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '$_level',
+                                                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'level',
+                                                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  left: BorderSide(color: Colors.grey),
+                                                  right: BorderSide(color: Colors.grey)
+                                                )
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 32, right: 32),
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${_winRate.toStringAsFixed(2)}%',
+                                                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'win rate',
+                                                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 32),
+                                              child: Container(
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${userModel.xp}',
+                                                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'xp',
+                                                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      child: ListView(
+                                        shrinkWrap: true,
+                                        children: <Widget>[
+                                          ExpandableNotifier(
+                                            child: Column(
+                                              children: [
+                                                Expandable(
+                                                  collapsed: ExpandableButton(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                                                      ),
+                                                      child: SimpleTile.withCustomColors(
+                                                        Icons.add_circle, "History", null, Icons.arrow_drop_down, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                                    ),
+                                                  ),
+                                                  expanded: Column(
+                                                    children: [
+                                                      ExpandableButton(
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                                                          ),
+                                                          child: SimpleTile.withCustomColors(
+                                                            Icons.remove_circle, "History", null, Icons.arrow_drop_up, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                                        ),
+                                                      ),
+                                                      Container(child: showHistory(history)),
+                                                      ExpandableButton(
+                                                        child: Icon(Icons.arrow_drop_up),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Text(
+                                    "Contact",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  Text(
+                                    "${snapshot.data['email']}",
+                                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: MediaQuery.of(context).size.width / 2 - 70,
+                              top: 110,
+                              child:  Column(
+                                children: <Widget>[
+                                  Container(
+                                    width: 140,
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: (snapshot.data['profile_picture'] == null)
+                                               ? AssetImage("assets/images/default-profile-picture.png")
+                                               : NetworkImage(snapshot.data['profile_picture']))),
+                                  ),
+                                  Text(
+                                    "${userModel.name.toUpperCase()}",
+                                    style: TextStyle(
+                                      color: Colors.grey[700], fontWeight: FontWeight.bold
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: MediaQuery.of(context).size.width / 6 - 25,
+                              top: 160,
+                              child:  Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
                                 ),
-                              ],
-                            ));
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Color.fromRGBO(255, 90, 0, 1),
+                                    size: 32,
+                                  ),
+                                  onPressed: () => editProfile(context, user),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: MediaQuery.of(context).size.width / 6 - 25,
+                              top: 160,
+                              child:  Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.home,
+                                    color: Color.fromRGBO(236, 32, 77, 1),
+                                    size: 32,
+                                  ),
+                                  onPressed: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
                     }
                   }),
-            ),
-          ]);
+            );
         });
   }
 }
@@ -143,11 +316,12 @@ void editProfile(BuildContext context, FirebaseUser user) {
 
 Widget showHistory(List<String> history) {
   return (history != null)
-      ? new Expanded(
-          child: new ListView.builder(
-              itemCount: history.length,
-              itemBuilder: (context, index) {
-                return new GameHistoryTile(Icons.history, history[index].split(" "), () {});
-              }))
+      ? new ListView.builder(
+    shrinkWrap: true,
+
+    itemCount: history.length,
+    itemBuilder: (context, index) {
+      return new GameHistoryTile(Icons.history, history[index].split(" "), () {});
+    })
       : new SizedBox();
 }

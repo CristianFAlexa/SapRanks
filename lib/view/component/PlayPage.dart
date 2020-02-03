@@ -179,181 +179,208 @@ class _PlayPageState extends State<PlayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GradientAppBar(
-        title: Text(
-          "Games",
-          style: TextStyle(color: Colors.white),
-        ),
-        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.blueGrey[900], Colors.blueGrey[900]]),
-        automaticallyImplyLeading: true,
-        actions: <Widget>[
-          StreamBuilder(
-              stream: collectionReference.document(user.uid).snapshots(),
-              builder: (context, snapshot) {
-                return (snapshot.data == null)
-                    ? Text("Loading..")
-                    : Container(
-                        child: Row(
-                        children: <Widget>[
-                          (snapshot.data['role'] == "admin")
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.games,
-                                    size: 20.0,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () => setEditGameState(_editGameState),
-                                )
-                              : SizedBox(),
-                        ],
-                      ));
-              }),
-        ],
-      ),
+     resizeToAvoidBottomPadding: true,
       body: Container(
-        child: Column(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+        ),
+        child: ListView(
           children: <Widget>[
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 25, top: 20),
               child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 80,
-                child: ListView.builder(
-                  itemCount: gameItems.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        toPlayGame(
-                          context,
-                          user,
-                          snaps[index],
-                        );
-                      },
-                      child: Stack(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 320,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                                    child: Material(
-                                      borderRadius: BorderRadius.only(),
-                                      elevation: 14,
-                                      color: Colors.transparent,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(5),
-                                                topRight: Radius.circular(5),
-                                              ),
-                                              image: DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: NetworkImage(snaps[index].data['picture']),
-                                              ),
-                                            ),
-                                            height: MediaQuery.of(context).size.height / 3,
-                                            child: Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Center(
-                                                      child: FutureBuilder<RaisedButton>(
-                                                        future: checkSubscription(index),
-                                                        builder: (context, snapshot) {
-                                                          if (snapshot.hasData) {
-                                                            return snapshot.data;
-                                                          } else if (snapshot.hasError) {
-                                                            return Text("${snapshot.error}");
-                                                          }
-
-                                                          // By default, show a loading spinner.
-                                                          return CircularProgressIndicator();
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 50,
-                                            color: Colors.blueGrey[900],
-                                            child: Row(
-                                              children: <Widget>[
-                                                SizedBox(
-                                                  width: 25,
-                                                ),
-                                                Text(
-                                                  "${snaps[index].data['name']}",
-                                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                                ),
-                                                SizedBox(
-                                                  width: 25,
-                                                ),
-                                                Text(
-                                                  "${snaps[index].data['xp']} ",
-                                                  style: TextStyle(color: Colors.white, fontSize: 16),
-                                                ),
-                                                Icon(
-                                                  Icons.star,
-                                                  color: Colors.white,
-                                                  size: 16,
-                                                ),
-                                                (_editGameState)
-                                                    ? Row(
-                                                        children: <Widget>[
-                                                          Align(
-                                                            alignment: Alignment.centerRight,
-                                                            child: Container(
-                                                                child: IconButton(
-                                                              onPressed: () => showDeleteDialog(context, snaps[index].reference),
-                                                              icon: Icon(
-                                                                Icons.delete,
-                                                                color: Colors.white,
-                                                              ),
-                                                            )),
-                                                          ),
-                                                          Align(
-                                                            alignment: Alignment.centerRight,
-                                                            child: Container(
-                                                                child: IconButton(
-                                                              onPressed: () => toEditGamePage(context, snaps[index]),
-                                                              icon: Icon(
-                                                                Icons.edit,
-                                                                color: Colors.white,
-                                                              ),
-                                                            )),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    : SizedBox(),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                color: Colors.transparent,
+                child: Center(
+                  child: Row(
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
-                    );
-                  },
+                      Icon(
+                        Icons.videogame_asset,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                          '${gameItems.length}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                        ),
+                      ),
+                      Container(
+                          decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: Text(
+                              'Choose Game',
+                              style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+                          )),
+                     StreamBuilder(
+                       stream: collectionReference.document(user.uid).snapshots(),
+                       builder: (context, snapshot) {
+                        return (snapshot.data == null)
+                               ? CircularProgressIndicator()
+                               : Container(
+                          child: (snapshot.data['role'] == "admin")
+                                 ? Row(
+                           children: <Widget>[
+                            IconButton(icon: Icon(Icons.games, size: 20, color: Colors.white,), onPressed: () => setEditGameState(_editGameState),),
+                            Text(
+                             'Admin',
+                             style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+                           ],
+                          )
+                                 : Row(
+                           children: <Widget>[
+                            Icon(Icons.person, size: 20, color: Colors.white,),
+                            Text(
+                             'User',
+                             style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+                           ],
+                          )
+                        );
+                       }),
+                    ],
+                  ),
                 ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10, top: 15, left: 20),
+                    child: Text(
+                      'Games',
+                      style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+             color: Colors.white,
+              child: ListView.builder(
+               physics: ClampingScrollPhysics(),
+               scrollDirection: Axis.vertical,
+               shrinkWrap: true,
+                itemCount: gameItems.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      toPlayGame(
+                        context,
+                        user,
+                        snaps[index],
+                      );
+                    },
+                    child: Stack(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                           children: <Widget>[
+                            Container(
+                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                               topLeft: Radius.circular(5),
+                               topRight: Radius.circular(5),
+                              ),
+                              image: DecorationImage(
+                               fit: BoxFit.fill,
+                               image: NetworkImage(snaps[index].data['picture']),
+                              ),
+                             ),
+                             height: MediaQuery.of(context).size.height / 3,
+                             child: Center(
+                              child: Padding(
+                               padding: EdgeInsets.all(8.0),
+                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                 Center(
+                                  child: FutureBuilder<RaisedButton>(
+                                   future: checkSubscription(index),
+                                   builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                     return snapshot.data;
+                                    } else if (snapshot.hasError) {
+                                     return Text("${snapshot.error}");
+                                    }
+                                    return CircularProgressIndicator();
+                                   },
+                                  ),
+                                 ),
+                                ],
+                               ),
+                              ),
+                             ),
+                            ),
+                            Container(
+                             height: 50,
+                             decoration:
+                             BoxDecoration(
+                               color: Colors.white,
+                               boxShadow: [ BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                             ),
+                             child: Row(
+                              children: <Widget>[
+                               SizedBox(
+                                width: 25,
+                               ),
+                               Text(
+                                "${snaps[index].data['name']}",
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                               ),
+                               Spacer(),
+                               (_editGameState)
+                               ? Row(
+                                children: <Widget>[
+                                 IconButton(
+                                  onPressed: () => showDeleteDialog(context, snaps[index].reference),
+                                  icon: Icon(
+                                   Icons.delete,
+                                  ),
+                                 ),
+                                 IconButton(
+                                  onPressed: () => toEditGamePage(context, snaps[index]),
+                                  icon: Icon(
+                                   Icons.edit,
+                                  ),
+                                 ),
+                                ],
+                               )
+                               : SizedBox(),
+                               Icon(
+                                Icons.star,
+                                color: Color.fromRGBO(236, 32, 77, 1),
+                               ),
+                               Text(
+                                "${snaps[index].data['xp']} ",
+                                style: TextStyle(color: Color.fromRGBO(236, 32, 77, 1), fontSize: 24, fontWeight: FontWeight.bold),
+                               ),
+                              ],
+                             ),
+                            ),
+                           ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],

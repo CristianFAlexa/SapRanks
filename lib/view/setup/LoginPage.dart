@@ -1,17 +1,19 @@
+import 'package:bored/model/UserModel.dart';
 import 'package:bored/view/setup/MainPage.dart';
+import 'package:bored/view/widget/Cutout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'RegisterPage.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -21,128 +23,246 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final db = Firestore.instance;
   final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  void _signWithGoogle(BuildContext context) async {
+    _fcm.subscribeToTopic('games');
+    Scaffold.of(context).showSnackBar(new SnackBar(content: new Text('Sign in')));
+    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    final FirebaseUser user = (await firebaseAuth.signInWithCredential(credential)).user;
+
+    final userDocument = db.collection('users').document(user.uid);
+    userDocument.get().then((snapshot) async => {
+      // ignore: sdk_version_ui_as_code
+      if (!snapshot.exists)
+        {
+          await userDocument
+            .setData(new UserModel(user.uid, user.email, 'newbie', 'user_role', null, user.email.substring(0, 3), 1, 1, 0, new List<String>()).toJson())
+        }
+    });
+    _saveDeviceToken(user.uid);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          "assets/images/spaceman.jpg",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: GradientAppBar(
-            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.black38, Colors.black12]),
-            title: Text(widget.title),
+    return Scaffold(
+      body: Builder(
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            gradient:
+                LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
           ),
-          body: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [
-              Colors.black87,
-              Colors.black54,
-              Colors.black45,
-              Colors.black26,
-              Colors.black12,
-              Colors.black26,
-              Colors.black45,
-              Colors.black54,
-              Colors.black87,
-            ])),
-            child: Center(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 32),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.2,
-                            height: 50,
-                            padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                color: Colors.white,
-                                boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2)]),
-                            child: TextFormField(
-                              // ignore: missing_return
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return 'Email required!';
-                                }
-                              },
-                              onSaved: (input) => _email = input,
-                              decoration: InputDecoration(icon: Icon(Icons.mail), hintText: 'Email'),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              children: <Widget>[
+                Container(
+                  height: 120,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                        child: Center(
+                         child: ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: Cutout(
+                              color: Colors.white,
+                              child: Image.asset('assets/images/rsz_spacemandraw.png'),
                             ),
                           ),
-                          Container(
-                            padding: EdgeInsets.only(top: 32),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 1.2,
-                                  height: 50,
-                                  padding: EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 4),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      color: Colors.white,
-                                      boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2)]),
-                                  child: TextFormField(
-                                    // ignore: missing_return
-                                    validator: (input) {
-                                      if (input.length < 8) {
-                                        return 'Password required!';
-                                      }
-                                    },
-                                    onSaved: (input) => _password = input,
-                                    decoration: InputDecoration(icon: Icon(FontAwesomeIcons.key), hintText: 'Password'),
-                                    obscureText: true,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    RaisedButton(
-                      onPressed: signIn,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      color: Color.fromRGBO(255, 90, 0, 1),
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            FontAwesomeIcons.signInAlt,
-                            color: Colors.white,
-                          ),
-                          new Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child: new Text(
-                                "Sign in",
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                              )),
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 40
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Text('Login information', style: TextStyle(fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                      ),
+                      Padding(padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 5),
+                        child: TextFormField(
+                          validator: (input) {
+                            if (input.isEmpty) {
+                              return 'Email required!';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => _password = input,
+                          decoration: InputDecoration(
+                              enabledBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                              focusedBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
+                              errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                              focusedErrorBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: Icon(Icons.mail),
+                              hintText: 'user@domain.com',
+                              labelText: 'Email',
+                             ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 5),
+                        child: TextFormField(
+                          validator: (input) {
+                            if (input.length < 8) {
+                              return 'Password required!';
+                            }
+                            return null;
+                          },
+                          onSaved: (input) => _password = input,
+                          decoration: InputDecoration(
+                              enabledBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                              focusedBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
+                              errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                              focusedErrorBorder:
+                                  new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: Icon(FontAwesomeIcons.key),
+                              labelText: 'Password',
+                              ),
+                          obscureText: true,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: signIn,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 50, bottom: 5),
+                          child: Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              boxShadow: [ BoxShadow( color: Colors.grey, offset: Offset(0,5), blurRadius: 5) ],
+                              borderRadius: BorderRadius.circular(3),
+                              gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                            ),
+                            child: Center(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  FontAwesomeIcons.signInAlt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 40
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Text('New user?', style: TextStyle(fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16, top: 5, bottom: 50),
+                        child: OutlineButton(
+                          child: Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.person_add,
+                                    color: Colors.grey[500],
+                                    size: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'Sign Up',
+                                    style: TextStyle(color: Colors.grey[500], fontSize: 24),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          onPressed: toRegister, //callback when button is clicked
+                          borderSide: BorderSide(
+                            color: Colors.grey[500], //Color of the border
+                            style: BorderStyle.solid, //Style of the border
+                            width: 1, //width of the border
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 25,)
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height / 2.5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 30
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        Text('or sign in with', style: TextStyle(color: Colors.white),),
+                        SignInButton(Buttons.Google, onPressed: () =>  _signWithGoogle(context)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
+  }
+
+  void toRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RegisterPage(
+          title: 'Register',
+        ),
+        fullscreenDialog: true));
   }
 
   /// Get the token, save it to the database for current user

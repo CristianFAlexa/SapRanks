@@ -1,4 +1,4 @@
-import 'package:bored/view/setup/WelcomePage.dart';
+import 'package:bored/view/setup/LoginPage.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.blueGrey[900],
       ),
-      home: WelcomePage(),
+      home: LoginPage(),
     );
   }
 }
