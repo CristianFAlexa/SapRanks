@@ -194,8 +194,8 @@ class _MainPageState extends State<MainPage> {
                             ),
                           ),
                         ),
+                        Spacer(),
                         Container(
-                            decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
                             child: Padding(
                               padding: const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
@@ -219,22 +219,6 @@ class _MainPageState extends State<MainPage> {
                                ),
                               ),
                             )),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: Row(
-                            children: <Widget>[
-                             IconButton(
-                              icon: Icon(Icons.info),
-                              onPressed: () {},
-                              color: Colors.white,
-                             ),
-                              Text(
-                                'Info',
-                                style: TextStyle(fontSize: 20, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),
