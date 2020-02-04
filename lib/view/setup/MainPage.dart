@@ -7,13 +7,11 @@ import 'package:bored/view/widget/MenuCarouselSlider.dart';
 import 'package:bored/view/widget/NewsCard.dart';
 import 'package:bored/view/widget/NewsTile.dart';
 import 'package:bored/view/widget/SimpleTile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import '../component/PlayPage.dart';
 import '../component/UsersPage.dart';
@@ -33,29 +31,8 @@ class _MainPageState extends State<MainPage> {
 
   FirebaseUser user;
   DatabaseService databaseService = new DatabaseService();
-  List<DocumentSnapshot> snaps;
-  StreamSubscription<QuerySnapshot> games;
   final GoogleSignIn gSignIn = GoogleSignIn();
 
-  List<NewsTile> newsTiles = <NewsTile>[
-    NewsTile("Football", "Bosted xp for a balanced experience.", "Jan 8, 2020", "Boost", () {}),
-    NewsTile("Foosball", "Added new game foosball, come and check out!", "Jan 15, 2020", "NEW!", () {})
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    snaps = new List();
-    games?.cancel();
-    games = databaseService.getGamesList().listen((QuerySnapshot snapshot) {
-      final snapDocs = snapshot.documents;
-      if (mounted) {
-        setState(() {
-          this.snaps = snapDocs;
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +222,9 @@ class _MainPageState extends State<MainPage> {
                   physics: ClampingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  children: <Widget>[new MenuCarouselSlider(snaps, user), NewsCard("Updates", Icons.update, newsTiles)],
+                  children: <Widget>[
+                   new MenuCarouselSlider(user),
+                   NewsCard("Updates", Icons.update)],
                 ),
               ),
             ],

@@ -1,16 +1,12 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bored/model/QueueModel.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/component/CreateEventPage.dart';
-import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/component/QrCodeGenPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'PlayGamePage.dart';
 

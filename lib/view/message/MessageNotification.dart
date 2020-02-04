@@ -1,6 +1,8 @@
 import 'package:bored/model/Message.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class MessageNotification extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _MessageNotificationState extends State<MessageNotification> {
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
         final notification = message['notification'];
+        final data = message['data'];
         setState(() {
           messages.add(Message(title: notification['title'], body: notification['body']));
         });
@@ -36,7 +39,13 @@ class _MessageNotificationState extends State<MessageNotification> {
             ],
           ),
         );
-        // _showItemDialog(message);
+        Firestore.instance.collection('notification').document('${Uuid().v4()}')
+          .setData({
+          'title': notification['title'],
+          'body': notification['body'],
+          'tag': data['tag'],
+          'date': new Timestamp.now()
+          });
       },
       //onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {

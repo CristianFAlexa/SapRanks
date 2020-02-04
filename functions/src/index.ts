@@ -15,8 +15,10 @@ export const sendWhenCreateEvent = functions.firestore
             notification: {
                 title: `New ${event.game_name} Event!`,
                 body: `Where? ${event.location} Come and check out more!`,
-                icon: 'https://cmkt-image-prd.freetls.fastly.net/0.1.0/ps/2568933/910/607/m1/fpnw/wm0/1452%D0%BC%D1%81%D1%86%D1%8B-.jpg?1492634584&s=60fd9b8308802ec4418bc530469104c0',
                 click_action: 'FLUTTER_NOTIFICATION_CLICK' // required only for onResume or onLaunch callbacks
+            },
+            data: {
+                tag: `${event.game_name}`,
             }
         };
 
@@ -31,9 +33,11 @@ export const sendWhenDeleteEvent = functions.firestore
         const payload: admin.messaging.MessagingPayload = {
             notification: {
                 title: `${event.game_name} event canceled!`,
-                body: ``,
-                icon: 'https://cmkt-image-prd.freetls.fastly.net/0.1.0/ps/2568933/910/607/m1/fpnw/wm0/1452%D0%BC%D1%81%D1%86%D1%8B-.jpg?1492634584&s=60fd9b8308802ec4418bc530469104c0',
+                body: `Event no longer exists.`,
                 click_action: 'FLUTTER_NOTIFICATION_CLICK' // required only for onResume or onLaunch callbacks
+            },
+            data: {
+                tag: `${event.game_name}`,
             }
         };
 
@@ -49,8 +53,10 @@ export const sendWhenCreateGame = functions.firestore
             notification: {
                 title: `New game added!`,
                 body: `Come check out for new ${game.name} events`,
-                icon: 'https://cmkt-image-prd.freetls.fastly.net/0.1.0/ps/2568933/910/607/m1/fpnw/wm0/1452%D0%BC%D1%81%D1%86%D1%8B-.jpg?1492634584&s=60fd9b8308802ec4418bc530469104c0',
                 click_action: 'FLUTTER_NOTIFICATION_CLICK' // required only for onResume or onLaunch callbacks
+            },
+            data: {
+                tag: `${game.name}`,
             }
         };
 
@@ -66,8 +72,10 @@ export const sendWhenUpdateGame = functions.firestore
             notification: {
                 title: `New updates!`,
                 body: `Come check out for new ${game.name} updates`,
-                icon: 'https://cmkt-image-prd.freetls.fastly.net/0.1.0/ps/2568933/910/607/m1/fpnw/wm0/1452%D0%BC%D1%81%D1%86%D1%8B-.jpg?1492634584&s=60fd9b8308802ec4418bc530469104c0',
                 click_action: 'FLUTTER_NOTIFICATION_CLICK' // required only for onResume or onLaunch callbacks
+            },
+            data: {
+                tag: `${game.name}`,
             }
         };
 
@@ -83,8 +91,10 @@ export const sendWhenDeleteGame = functions.firestore
             notification: {
                 title: `Deleted game!`,
                 body: `${game.name} events no longer exists.`,
-                icon: 'https://cmkt-image-prd.freetls.fastly.net/0.1.0/ps/2568933/910/607/m1/fpnw/wm0/1452%D0%BC%D1%81%D1%86%D1%8B-.jpg?1492634584&s=60fd9b8308802ec4418bc530469104c0',
                 click_action: 'FLUTTER_NOTIFICATION_CLICK' // required only for onResume or onLaunch callbacks
+            },
+            data: {
+                tag: `${game.name}`,
             }
         };
 

@@ -270,7 +270,6 @@ class _PlayGamePageState extends State<PlayGamePage> {
                                         ),
                                       ),
                                       Container(
-                                        decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
                                         child: Padding(
                                           padding: const EdgeInsets.only(left: 10, right: 10),
                                           child: Container(

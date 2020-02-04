@@ -1,38 +1,64 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'NewsTile.dart';
-import 'SimpleTile.dart';
 
 class NewsCard extends StatelessWidget {
   final String cardText;
   final IconData newsIcon;
-  final List<NewsTile> tiles;
 
-  NewsCard(this.cardText, this.newsIcon, this.tiles);
+  NewsCard(this.cardText, this.newsIcon);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      semanticContainer: true,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Column(
-        children: <Widget>[
-          SimpleTile.withCustomColors(newsIcon, cardText, () {}, null, Colors.black, Colors.white, Colors.black),
-          ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: tiles.length,
-              itemBuilder: (context, index) {
-                return tiles[index];
-              })
-        ],
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2.0),
-      ),
-      elevation: 5,
-      margin: EdgeInsets.all(10),
-    );
+    return StreamBuilder(
+        stream: Firestore.instance.collection('notification').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || snapshot.hasError)
+            return CircularProgressIndicator();
+          else
+            return Card(
+              semanticContainer: true,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            newsIcon,
+                            color: Colors.grey[500],
+                            size: 20,
+                          ),
+                          Text(
+                            cardText,
+                            style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold, fontSize: 20),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.documents.length,
+                      itemBuilder: (context, index) {
+                        return NewsTile(snapshot.data.documents[index].data['tag'], snapshot.data.documents[index].data['body'],
+                            '${snapshot.data.documents[index].data['date'].toDate()}'.substring(0, 19), snapshot.data.documents[index].data['title']);
+                      })
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(2.0),
+              ),
+              elevation: 5,
+              margin: EdgeInsets.all(10),
+            );
+        });
   }
 }
