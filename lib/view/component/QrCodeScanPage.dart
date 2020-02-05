@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   var qrText = "";
-  var qrFlag = "NOT DONE";
+  var qrFlag = false;
   QRViewController controller;
 
   @override
@@ -35,55 +36,64 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
               onQRViewCreated: _onQRViewCreated,
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  Text('Scan result: $qrFlag'),
-                  RaisedButton(
-                    onPressed: () {
-                      if (qrText != null) {
-                        final List<String> qrList = qrText.split(" ");
-                        List<String> players;
-                        queueCollectionReference.document(qrList[0]).collection('active').document(qrList[1]).get().then((snap) {
-                          setState(() {
-                            players = new List<String>.from(snap.data['players']);
-                            players.add(user.uid);
-                          });
-                          queueCollectionReference
-                              .document(qrList[0])
-                              .collection('active')
-                              .document(qrList[1])
-                              .updateData({'players': FieldValue.arrayUnion(players)});
+          Center(
+            child: Column(
+              children: <Widget>[
+                (qrFlag == false)? CircularProgressIndicator() :
+                Icon(Icons.check, color: Colors.green,),
+                RaisedButton(
+                  onPressed: () {
+                    if (qrText != null) {
+                      final List<String> qrList = qrText.split(" ");
+                      List<String> players;
+                      queueCollectionReference.document(qrList[0]).collection('active').document(qrList[1]).get().then((snap) {
+                        setState(() {
+                          players = new List<String>.from(snap.data['players']);
+                          players.add(user.uid);
                         });
-                      }
+                        queueCollectionReference
+                          .document(qrList[0])
+                          .collection('active')
+                          .document(qrList[1])
+                          .updateData({'players': FieldValue.arrayUnion(players)});
+                      });
                       Navigator.of(context).pop();
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    color: Colors.blueGrey,
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.min,
+                    }
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  color: Constants.primaryColor,
+                  child: new Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Container(
+                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: new Text(
+                          "Confirm",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        )),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () => {
+                    Navigator.of(context).pop(),
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8, right: 16, top: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Icon(
-                          Icons.directions_run,
-                          color: Colors.white,
-                        ),
-                        new Container(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: new Text(
-                              "ok",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            )),
+                        Icon(Icons.arrow_back),
+                        Text('Back to main screen')
                       ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -94,7 +104,7 @@ class _QrCodeScanPageState extends State<QrCodeScanPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData;
-        qrFlag = "SUCCESFUL";
+        qrFlag = true;
       });
     });
   }

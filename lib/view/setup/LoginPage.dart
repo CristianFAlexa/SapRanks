@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/view/message/MessageNotification.dart';
 import 'package:bored/view/setup/MainPage.dart';
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               decoration: BoxDecoration(
                 gradient:
-                LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: Constants.appColors),
               ),
               child: Form(
                 key: _formKey,
@@ -165,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                                   gradient: LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
-                                    colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                                    colors: Constants.appColors),
                                 ),
                                 child: Center(
                                   child: Row(
@@ -246,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                           children: <Widget>[
                             Text('or sign in with', style: TextStyle(color: Colors.white),),
-                            SignInButton(Buttons.Google, onPressed: () =>  _signWithGoogle(context)),
+                            SignInButton(Buttons.GoogleDark, onPressed: () =>  _signWithGoogle(context)),
                           ],
                         ),
                       ),

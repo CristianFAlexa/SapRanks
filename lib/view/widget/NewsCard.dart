@@ -48,8 +48,10 @@ class NewsCard extends StatelessWidget {
                       shrinkWrap: true,
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (context, index) {
+                       if(snapshot.data.documents[index].data['tag']!=null)
                         return NewsTile(snapshot.data.documents[index].data['tag'], snapshot.data.documents[index].data['body'],
                             '${snapshot.data.documents[index].data['date'].toDate()}'.substring(0, 19), snapshot.data.documents[index].data['title']);
+                       return SizedBox();
                       })
                 ],
               ),

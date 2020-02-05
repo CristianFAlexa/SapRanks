@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
@@ -68,6 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
         stream: collectionReference.document(this.user.uid).snapshots(),
         builder: (context, snapshot) {
           return Scaffold(
+            resizeToAvoidBottomPadding: true,
               body: StreamBuilder(
                   stream: collectionReference.document(this.user.uid).snapshots(),
                   builder: (context, snapshot) {
@@ -86,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       gradient: LinearGradient(
                                         begin: Alignment.centerLeft,
                                         end: Alignment.centerRight,
-                                        colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                                        colors: Constants.appColors),
                                     ),
                                     child: Row(
                                       children: <Widget>[
@@ -268,7 +270,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: IconButton(
                                   icon: Icon(
                                     Icons.edit,
-                                    color: Color.fromRGBO(255, 90, 0, 1),
+                                    color: Constants.primaryColorLight,
                                     size: 32,
                                   ),
                                   onPressed: () => editProfile(context, user),
@@ -288,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 child: IconButton(
                                   icon: Icon(
                                     Icons.home,
-                                    color: Color.fromRGBO(236, 32, 77, 1),
+                                    color: Constants.primaryColorDark,
                                     size: 32,
                                   ),
                                   onPressed: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},

@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/component/PlayPage.dart';
 import 'package:bored/view/widget/Cutout.dart';
@@ -238,7 +239,7 @@ class _PlayGamePageState extends State<PlayGamePage> {
               : Scaffold(
                   body: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                      gradient: LinearGradient(colors: Constants.appColors),
                     ),
                     child: ListView(
                       children: <Widget>[

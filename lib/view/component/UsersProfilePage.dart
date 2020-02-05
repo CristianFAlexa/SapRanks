@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/widget/SimpleTile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'ProfilePage.dart';
@@ -69,7 +68,7 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                     gradient: LinearGradient(
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
-                      colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                      colors: Constants.appColors),
                   ),
                   child: Row(
                     children: <Widget>[

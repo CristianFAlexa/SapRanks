@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/GameModel.dart';
 import 'package:bored/model/Regex.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -106,7 +107,7 @@ class _EditGamePageState extends State<EditGamePage> {
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                        begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                        begin: Alignment.centerLeft, end: Alignment.centerRight, colors: Constants.appColors),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -143,7 +144,7 @@ class _EditGamePageState extends State<EditGamePage> {
                           ],
                         ),
                         elevation: 10,
-                        shadowColor: Color.fromRGBO(255, 90, 0, 1),
+                        shadowColor: Constants.primaryColor,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
@@ -334,7 +335,7 @@ class _EditGamePageState extends State<EditGamePage> {
               Scaffold.of(context).showSnackBar(SnackBar(content: Text("Cannot update game!")));
           },
           child: Icon(Icons.check),
-          backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+          backgroundColor: Constants.primaryColor,
           heroTag: 'updateGameFloatingActionButton',
         ),
       ),

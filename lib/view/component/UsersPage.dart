@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'UsersProfilePage.dart';
 
@@ -41,7 +41,7 @@ class _UsersPageState extends State<UsersPage> {
      resizeToAvoidBottomPadding: true,
       body: Container(
        decoration: BoxDecoration(
-         gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+         gradient: LinearGradient(colors: Constants.appColors),
        ),
         child: ListView(
           children: <Widget>[
@@ -177,10 +177,10 @@ class _UsersPageState extends State<UsersPage> {
                               padding: const EdgeInsets.only(bottom: 35, right: 8),
                               child: Row(
                                children: <Widget>[
-                                Icon(Icons.star, color: Color.fromRGBO(236, 32, 77, 1),),
+                                Icon(Icons.star, color: Constants.primaryColorLight,),
                                 Text(
                                  "${items[index].xp}",
-                                 style: TextStyle(color: Color.fromRGBO(236, 32, 77, 1), fontSize: 20, fontWeight: FontWeight.bold),
+                                 style: TextStyle(color: Constants.primaryColorLight, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                ],
                               ),

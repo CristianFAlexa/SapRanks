@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/QueueModel.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/component/CreateEventPage.dart';
@@ -115,7 +116,7 @@ class _GamePageState extends State<GamePage> {
       resizeToAvoidBottomPadding: true,
       body: Container(
        decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+        gradient: LinearGradient(colors: Constants.appColors),
        ),
         child: ListView(
           children: <Widget>[
@@ -248,11 +249,11 @@ class _GamePageState extends State<GamePage> {
                              Spacer(),
                              Icon(
                               Icons.star,
-                              color:  Color.fromRGBO(236, 32, 77, 1),
+                              color:  Constants.primaryColorLight,
                              ),
                              Text(
                               "${gameDetails.data['xp']}",
-                              style: TextStyle(color:  Color.fromRGBO(236, 32, 77, 1), fontWeight: FontWeight.bold, fontSize: 24),
+                              style: TextStyle(color:  Constants.primaryColorLight, fontWeight: FontWeight.bold, fontSize: 24),
                              ),
                             ],
                            ),

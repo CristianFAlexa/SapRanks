@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:flutter/material.dart';
 
 class SimpleTile extends StatelessWidget {
@@ -29,7 +30,7 @@ class SimpleTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(3.0, 0, 3.0, 0),
       child: InkWell(
-        splashColor: Color.fromRGBO(236, 32, 77, 1),
+        splashColor: Constants.primaryColor,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(

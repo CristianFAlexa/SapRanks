@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:flutter/material.dart';
 
 class GameHistoryTile extends StatelessWidget {
@@ -12,7 +13,7 @@ class GameHistoryTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
       child: InkWell(
-        splashColor: Color.fromRGBO(236, 32, 77, 1),
+        splashColor: Constants.primaryColor,
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(

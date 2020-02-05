@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/GameModel.dart';
 import 'package:bored/model/Regex.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -77,7 +78,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                     gradient: LinearGradient(
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
-                      colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                      colors: Constants.appColors),
                   ),
                   child: Column(
                     children: <Widget>[
@@ -105,7 +106,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                           ],
                         ),
                         elevation: 10,
-                        shadowColor: Color.fromRGBO(255, 90, 0, 1),
+                        shadowColor: Constants.primaryColor,
                          borderRadius: BorderRadius.only(
                            topLeft: Radius.circular(20),
                            topRight: Radius.circular(20),
@@ -323,7 +324,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
               Scaffold.of(context).showSnackBar(SnackBar(content: Text("Cannot create game!")));
           },
           child: Icon(Icons.check),
-          backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+          backgroundColor: Constants.primaryColor,
           heroTag: 'createGameFloatingActionButton',
         ),
       ),

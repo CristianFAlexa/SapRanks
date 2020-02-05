@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bored/model/Constants.dart';
 import 'package:flutter/material.dart';
 
 class NewsTile extends StatelessWidget {
@@ -23,7 +24,7 @@ class NewsTile extends StatelessWidget {
                 height: 15,
                 child: RaisedButton(
                   onPressed: () {},
-                  color: Colors.red[900],
+                  color: Constants.primaryColor,
                   child: Container(
                     child: new Text(
                       topic,

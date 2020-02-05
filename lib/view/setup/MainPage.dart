@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/setup/LoginPage.dart';
 import 'package:bored/view/widget/Cutout.dart';
@@ -48,7 +49,7 @@ class _MainPageState extends State<MainPage> {
                       return UserAccountsDrawerHeader(
                         decoration: BoxDecoration(
                             boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 12)],
-                            gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)])),
+                            gradient: LinearGradient(colors: Constants.appColors)),
                         accountName: Text("${snapshot.data['name']}"),
                         accountEmail: Text("${snapshot.data['email']}"),
                         currentAccountPicture: Container(
@@ -113,7 +114,7 @@ class _MainPageState extends State<MainPage> {
                               () => {Navigator.push(context, MaterialPageRoute(builder: (context) => QrCodeScanPage(user), fullscreenDialog: true))},
                               null,
                               Colors.white,
-                              Colors.grey[800],
+                              Constants.primaryColor,
                               Colors.white),
                           ExpandableButton(
                             // <-- Collapses when tapped on
@@ -144,7 +145,7 @@ class _MainPageState extends State<MainPage> {
       body: Builder(
         builder: (context) => Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+            gradient: LinearGradient(colors: Constants.appColors),
           ),
           child: ListView(
             children: <Widget>[

@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/QueueModel.dart';
 import 'package:bored/model/Regex.dart';
 import 'package:bored/service/DatabaseService.dart';
@@ -70,7 +71,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                      begin: Alignment.centerLeft, end: Alignment.centerRight, colors: Constants.appColors),
                 ),
                 child: Column(
                   children: <Widget>[
@@ -107,7 +108,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         ],
                       ),
                       elevation: 10,
-                      shadowColor: Color.fromRGBO(255, 90, 0, 1),
+                      shadowColor: Constants.primaryColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -171,7 +172,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    color: Color.fromRGBO(255, 90, 0, 1),
+                                    color: Constants.primaryColor,
                                     child: new Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
@@ -319,7 +320,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               Scaffold.of(context).showSnackBar(SnackBar(content: Text("Cannot create event!")));
           },
           child: Icon(Icons.check),
-          backgroundColor: Color.fromRGBO(255, 90, 0, 1),
+          backgroundColor: Constants.primaryColor,
           heroTag: 'createEventFloatingActionButton',
         ),
       ),

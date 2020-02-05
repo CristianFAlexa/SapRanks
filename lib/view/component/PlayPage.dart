@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/GameModel.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -181,7 +182,7 @@ class _PlayPageState extends State<PlayPage> {
      resizeToAvoidBottomPadding: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+          gradient: LinearGradient(colors: Constants.appColors),
         ),
         child: ListView(
           children: <Widget>[
@@ -364,11 +365,11 @@ class _PlayPageState extends State<PlayPage> {
                                : SizedBox(),
                                Icon(
                                 Icons.star,
-                                color: Color.fromRGBO(236, 32, 77, 1),
+                                color: Constants.primaryColorLight,
                                ),
                                Text(
                                 "${snaps[index].data['xp']} ",
-                                style: TextStyle(color: Color.fromRGBO(236, 32, 77, 1), fontSize: 24, fontWeight: FontWeight.bold),
+                                style: TextStyle(color: Constants.primaryColorLight, fontSize: 24, fontWeight: FontWeight.bold),
                                ),
                               ],
                              ),

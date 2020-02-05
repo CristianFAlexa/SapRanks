@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bored/model/Constants.dart';
 import 'package:bored/service/DatabaseService.dart';
 import 'package:bored/view/widget/Cutout.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,7 +8,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -77,7 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       resizeToAvoidBottomPadding: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+          gradient: LinearGradient(colors: Constants.appColors),
         ),
         child: ListView(
           children: <Widget>[
@@ -114,7 +114,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                           Container(
-                            decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
                             child: Padding(
                               padding: const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
@@ -194,7 +193,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             alignment: Alignment.center,
                                             child: CircleAvatar(
                                               radius: 80,
-                                              backgroundColor: Color.fromRGBO(255, 90, 0, 1),
                                               child: ClipOval(
                                                 child: SizedBox(
                                                   width: 150.0,

@@ -1,3 +1,4 @@
+import 'package:bored/model/Constants.dart';
 import 'package:bored/model/Regex.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/view/widget/Cutout.dart';
@@ -7,7 +8,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import 'LoginPage.dart';
 
@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             gradient:
-            LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+            LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: Constants.appColors),
           ),
           child: Form(
             key: _formKey,
@@ -153,7 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             focusedErrorBorder:
                             new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
                             prefixIcon: Icon(FontAwesomeIcons.key),
-                            labelText: 'Password',
+                            labelText: 'Check Password',
                           ),
                           obscureText: true,
                         ),
@@ -176,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               gradient: LinearGradient(
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
-                                colors: [Color.fromRGBO(255, 90, 0, 1), Color.fromRGBO(236, 32, 77, 1)]),
+                                colors: Constants.appColors),
                             ),
                             child: Center(
                               child: Row(
