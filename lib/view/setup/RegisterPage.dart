@@ -66,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10) //.circular(20)
+                    borderRadius: BorderRadius.circular(3)
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -93,12 +93,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _password = input,
                           decoration: InputDecoration(
                             enabledBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(3)),
                             focusedBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
-                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(3)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             focusedErrorBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             prefixIcon: Icon(Icons.mail),
                             hintText: 'user@domain.com',
                             labelText: 'Email',
@@ -120,12 +120,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _password = input,
                           decoration: InputDecoration(
                             enabledBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(3)),
                             focusedBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
-                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(3)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             focusedErrorBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             prefixIcon: Icon(FontAwesomeIcons.key),
                             labelText: 'Password',
                           ),
@@ -146,12 +146,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           onSaved: (input) => _password = input,
                           decoration: InputDecoration(
                             enabledBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(3)),
                             focusedBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
-                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(3)),
+                            errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             focusedErrorBorder:
-                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                            new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                             prefixIcon: Icon(FontAwesomeIcons.key),
                             labelText: 'Check Password',
                           ),

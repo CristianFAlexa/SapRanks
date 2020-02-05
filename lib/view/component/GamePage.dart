@@ -138,25 +138,6 @@ class _GamePageState extends State<GamePage> {
                  padding: const EdgeInsets.only(right: 10),
                  child: Text('${items.length}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(color: Colors.white),
-                      right: BorderSide(color: Colors.white)
-                    )
-                  ),
-                  child: Padding(
-                   padding: const EdgeInsets.only(left: 10, right: 10),
-                   child: Text('Select Event', style: TextStyle(fontSize: 15, color: Colors.white),),
-                  )
-                ),
-                Padding(
-                 padding: const EdgeInsets.only(left: 10, right: 10),
-                 child: Text('${gameDetails.data['name']}',
-                  style: TextStyle(fontSize: 15, color: Colors.white), maxLines: 4, softWrap: true,
-                  overflow: TextOverflow.ellipsis,
-                 ),
-                )
                ],
               ),
              ),

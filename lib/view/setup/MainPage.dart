@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:bored/model/Constants.dart';
 import 'package:bored/service/DatabaseService.dart';
@@ -46,21 +47,23 @@ class _MainPageState extends State<MainPage> {
                   stream: collectionReference.document(user.uid).snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.data != null)
-                      return UserAccountsDrawerHeader(
-                        decoration: BoxDecoration(
-                            boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 12)],
-                            gradient: LinearGradient(colors: Constants.appColors)),
-                        accountName: Text("${snapshot.data['name']}"),
-                        accountEmail: Text("${snapshot.data['email']}"),
-                        currentAccountPicture: Container(
+                      return InkWell(
+                       onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: user), fullscreenDialog: true))},
+                        child: UserAccountsDrawerHeader(
                           decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 12)],
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: (snapshot.data['profile_picture'] == null)
-                                      ? AssetImage("assets/images/default-profile-picture.png")
-                                      : NetworkImage(snapshot.data['profile_picture']))),
+                              gradient: LinearGradient(colors: Constants.appColors)),
+                          accountName: Text("${snapshot.data['name']}"),
+                          accountEmail: Text("${snapshot.data['email']}"),
+                          currentAccountPicture: Container(
+                            decoration: BoxDecoration(
+                                boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 12)],
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: (snapshot.data['profile_picture'] == null)
+                                        ? AssetImage("assets/images/default-profile-picture.png")
+                                        : NetworkImage(snapshot.data['profile_picture']))),
+                          ),
                         ),
                       );
                     else
@@ -70,7 +73,7 @@ class _MainPageState extends State<MainPage> {
                   FontAwesomeIcons.userAlt,
                   "Profile",
                   () => {Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user: user), fullscreenDialog: true))},
-                  Icons.arrow_right,
+                  null,
                   Colors.grey[800],
                   Colors.white,
                   Colors.grey[300]),
@@ -78,7 +81,7 @@ class _MainPageState extends State<MainPage> {
                   FontAwesomeIcons.solidPlayCircle,
                   "Play",
                   () => {Navigator.push(context, MaterialPageRoute(builder: (context) => PlayPage(user: user)))},
-                  Icons.arrow_right,
+                  null,
                   Colors.grey[800],
                   Colors.white,
                   Colors.grey[300]),
@@ -86,7 +89,7 @@ class _MainPageState extends State<MainPage> {
                   Icons.people,
                   "Users",
                   () => {Navigator.push(context, MaterialPageRoute(builder: (context) => UsersPage(), fullscreenDialog: true))},
-                  Icons.arrow_right,
+                  null,
                   Colors.grey[800],
                   Colors.white,
                   Colors.grey[300]),
@@ -99,14 +102,14 @@ class _MainPageState extends State<MainPage> {
                       collapsed: ExpandableButton(
                         // <-- Expands when tapped on the cover photo
                         child: SimpleTile.withCustomColors(
-                            Icons.settings, "Settings", null, Icons.arrow_drop_down, Colors.grey[800], Colors.white, Colors.grey[300]),
+                            Icons.settings, "Settings", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                       ),
                       expanded: Column(
                         children: [
                           ExpandableButton(
                             // <-- Collapses when tapped on
                             child: SimpleTile.withCustomColors(
-                                Icons.settings, "Settings", null, Icons.arrow_drop_up, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                Icons.settings, "Settings", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                           ),
                           SimpleTile.withCustomColors(
                               FontAwesomeIcons.qrcode,
@@ -134,7 +137,7 @@ class _MainPageState extends State<MainPage> {
                         print('Signed out.'),
                         Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(), fullscreenDialog: true))
                       },
-                  Icons.arrow_right,
+                  null,
                   Colors.grey[800],
                   Colors.white,
                   Colors.grey[300]),

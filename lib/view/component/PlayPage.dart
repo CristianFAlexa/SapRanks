@@ -215,39 +215,29 @@ class _PlayPageState extends State<PlayPage> {
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                         ),
                       ),
-                      Container(
-                          decoration: BoxDecoration(border: Border(left: BorderSide(color: Colors.white), right: BorderSide(color: Colors.white))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10, right: 10),
-                            child: Text(
-                              'Choose Game',
-                              style: TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                          )),
+                     Spacer(),
                      StreamBuilder(
                        stream: collectionReference.document(user.uid).snapshots(),
                        builder: (context, snapshot) {
                         return (snapshot.data == null)
                                ? CircularProgressIndicator()
                                : Container(
-                          child: (snapshot.data['role'] == "admin")
-                                 ? Row(
-                           children: <Widget>[
-                            IconButton(icon: Icon(Icons.games, size: 20, color: Colors.white,), onPressed: () => setEditGameState(_editGameState),),
-                            Text(
-                             'Admin',
-                             style: TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                           ],
-                          )
-                                 : Row(
-                           children: <Widget>[
-                            Icon(Icons.person, size: 20, color: Colors.white,),
-                            Text(
-                             'User',
-                             style: TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                           ],
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 24),
+                            child: (snapshot.data['role'] == "admin")
+                                   ? Row(
+                             children: <Widget>[
+                              IconButton(icon: Icon(Icons.games, size: 20, color: Colors.white,), onPressed: () => setEditGameState(_editGameState),),
+                              InkWell(
+                               onTap: () => setEditGameState(_editGameState),
+                                child: Text(
+                                 'Admin',
+                                 style: TextStyle(fontSize: 15, color: Colors.white),
+                                ),
+                              ),
+                             ],
+                            )
+                                   : SizedBox(),
                           )
                         );
                        }),

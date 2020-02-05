@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:bored/model/Constants.dart';
 import 'package:bored/model/Rank.dart';
 import 'package:bored/model/UserModel.dart';
 import 'package:bored/service/DatabaseService.dart';
-import 'package:bored/view/setup/MainPage.dart';
 import 'package:bored/view/widget/GameHistoryTile.dart';
 import 'package:bored/view/widget/SimpleTile.dart';
 import 'package:expandable/expandable.dart';
@@ -80,28 +80,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         return Stack(
                           children: <Widget>[
                             Container(
-                              child: Column(
+                              child: ListView(
+                                shrinkWrap: true,
                                 children: <Widget>[
-                                  Container(
-                                    height: 180,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: Constants.appColors),
-                                    ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: Icon(Icons.arrow_back, color: Colors.white,),
-                                          onPressed: () => {
-                                            Navigator.of(context).pop()
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 100,),
+                                  SizedBox(height: 280,),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
@@ -179,6 +161,40 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 32),
+                                              child: Container(
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${snapshot.data['email']}',
+                                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                      'Contact',
+                                                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Container(
                                       child: ListView(
                                         shrinkWrap: true,
                                         children: <Widget>[
@@ -192,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
                                                       ),
                                                       child: SimpleTile.withCustomColors(
-                                                        Icons.add_circle, "History", null, Icons.arrow_drop_down, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                                        Icons.add_circle, "History", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                                                     ),
                                                   ),
                                                   expanded: Column(
@@ -203,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                             boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
                                                           ),
                                                           child: SimpleTile.withCustomColors(
-                                                            Icons.remove_circle, "History", null, Icons.arrow_drop_up, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                                            Icons.remove_circle, "History", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                                                         ),
                                                       ),
                                                       Container(child: showHistory(history)),
@@ -221,15 +237,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   SizedBox(height: 10,),
-                                  Text(
-                                    "Contact",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  Text(
-                                    "${snapshot.data['email']}",
-                                    style: TextStyle(color: Colors.grey, fontSize: 20),
-                                  ),
                                 ],
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              child:  Container(
+                                height: 180,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: Constants.appColors),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.arrow_back, color: Colors.white,),
+                                        onPressed: () => {
+                                          Navigator.of(context).pop()
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                             Positioned(
@@ -274,26 +309,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                     size: 32,
                                   ),
                                   onPressed: () => editProfile(context, user),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              right: MediaQuery.of(context).size.width / 6 - 25,
-                              top: 160,
-                              child:  Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.home,
-                                    color: Constants.primaryColorDark,
-                                    size: 32,
-                                  ),
-                                  onPressed: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
                                 ),
                               ),
                             ),

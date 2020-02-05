@@ -60,28 +60,10 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
       body: Stack(
         children: <Widget>[
           Container(
-            child: Column(
+            child: ListView(
+              shrinkWrap: true,
               children: <Widget>[
-                Container(
-                  height: 180,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: Constants.appColors),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white,),
-                        onPressed: () => {
-                          Navigator.of(context).pop()
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 100,),
+                SizedBox(height: 280,),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
@@ -159,6 +141,40 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 32),
+                            child: Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    '${user.email}',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    'Contact',
+                                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(
                     child: ListView(
                       shrinkWrap: true,
                       children: <Widget>[
@@ -172,7 +188,7 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                       boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
                                     ),
                                     child: SimpleTile.withCustomColors(
-                                      Icons.add_circle, "History", null, Icons.arrow_drop_down, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                      Icons.add_circle, "History", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                                   ),
                                 ),
                                 expanded: Column(
@@ -183,7 +199,7 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                                           boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0,5), blurRadius: 5)]
                                         ),
                                         child: SimpleTile.withCustomColors(
-                                          Icons.remove_circle, "History", null, Icons.arrow_drop_up, Colors.grey[800], Colors.white, Colors.grey[300]),
+                                          Icons.remove_circle, "History", null, null, Colors.grey[800], Colors.white, Colors.grey[300]),
                                       ),
                                     ),
                                     Container(child: showHistory(history)),
@@ -201,15 +217,34 @@ class _UsersProfilePageState extends State<UsersProfilePage> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                Text(
-                  "Contact",
-                  style: TextStyle(color: Colors.grey),
-                ),
-                Text(
-                  "${user.email}",
-                  style: TextStyle(color: Colors.grey, fontSize: 20),
-                ),
               ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child:  Container(
+              height: 180,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: Constants.appColors),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white,),
+                      onPressed: () => {
+                        Navigator.of(context).pop()
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
           Positioned(

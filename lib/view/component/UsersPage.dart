@@ -63,22 +63,6 @@ class _UsersPageState extends State<UsersPage> {
                     padding: const EdgeInsets.only(right: 10),
                     child: Text('${items.length}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),),
                   ),
-                 Container(
-                  decoration: BoxDecoration(
-                   border: Border(
-                    left: BorderSide(color: Colors.white),
-                    right: BorderSide(color: Colors.white)
-                   )
-                  ),
-                   child: Padding(
-                     padding: const EdgeInsets.only(left: 10, right: 10),
-                     child: Text('Select Profile', style: TextStyle(fontSize: 18, color: Colors.white),),
-                   )
-                 ),
-                 Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: Text('Ranks, Users', style: TextStyle(fontSize: 18, color: Colors.white),),
-                 )
                 ],
                ),
               ),

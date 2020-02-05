@@ -90,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10)
+                        borderRadius: BorderRadius.circular(3)
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -117,12 +117,12 @@ class _LoginPageState extends State<LoginPage> {
                               onSaved: (input) => _password = input,
                               decoration: InputDecoration(
                                 enabledBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(3)),
                                 focusedBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
-                                errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(3)),
+                                errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                                 focusedErrorBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                                 prefixIcon: Icon(Icons.mail),
                                 hintText: 'user@domain.com',
                                 labelText: 'Email',
@@ -141,12 +141,12 @@ class _LoginPageState extends State<LoginPage> {
                               onSaved: (input) => _password = input,
                               decoration: InputDecoration(
                                 enabledBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.blueGrey[900]), borderRadius: BorderRadius.circular(3)),
                                 focusedBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(20)),
-                                errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.green[600]), borderRadius: BorderRadius.circular(3)),
+                                errorBorder: new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                                 focusedErrorBorder:
-                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(20)),
+                                new OutlineInputBorder(borderSide: new BorderSide(color: Colors.red[600]), borderRadius: BorderRadius.circular(3)),
                                 prefixIcon: Icon(FontAwesomeIcons.key),
                                 labelText: 'Password',
                               ),
@@ -187,17 +187,6 @@ class _LoginPageState extends State<LoginPage> {
                                     ],
                                   )),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 10,
-                              left: 40
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Text('New user?', style: TextStyle(fontWeight: FontWeight.bold),),
-                              ],
                             ),
                           ),
                           Padding(
