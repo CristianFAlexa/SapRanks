@@ -435,23 +435,6 @@ class _PlayGamePageState extends State<PlayGamePage> {
                                       )
                                                : Text("Event no longer available!"),
                                     ),
-                                    Stack(
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Align(
-                                            alignment: Alignment.bottomRight,
-                                            child: FloatingActionButton(
-                                              heroTag: "floatingButton3",
-                                              onPressed: () =>
-                                              {Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage(user: user), fullscreenDialog: true))},
-                                              child: Icon(Icons.home),
-                                              backgroundColor: Colors.blueGrey[900],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
                                   ],
                                 ),
                               ),

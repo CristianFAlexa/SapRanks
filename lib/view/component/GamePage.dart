@@ -8,6 +8,7 @@ import 'package:bored/view/component/QrCodeGenPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'PlayGamePage.dart';
 
@@ -167,7 +168,6 @@ class _GamePageState extends State<GamePage> {
                 return (snaps[index] == null)
                        ? SizedBox()
                        : GestureDetector(
-                 onDoubleTap: () => toQrCode(context, snaps[index].documentID, gameDetails.data['name']),
                  onTap: () {
                   if (!items[index].players.contains(user.uid))
                    showChooseTeamDialog(context, index);
@@ -303,6 +303,16 @@ class _GamePageState extends State<GamePage> {
                                 .textTheme
                                 .display1
                                 .copyWith(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
+                             ),
+                             Spacer(),
+                             InkWell(
+                              onTap: () => toQrCode(context, snaps[index].documentID, gameDetails.data['name']),
+                               child: Row(
+                                children: <Widget>[
+                                  Icon(FontAwesomeIcons.share, color: Colors.grey, size: 20,),
+                                 Text(' SHARE', style: TextStyle(color: Colors.grey),)
+                                ],
+                               ),
                              ),
                             ],
                            ),

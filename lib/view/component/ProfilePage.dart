@@ -292,30 +292,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ],
                               ),
                             ),
-                            Positioned(
-                              left: MediaQuery.of(context).size.width / 6 - 25,
-                              top: 160,
-                              child:  Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: Constants.primaryColorLight,
-                                    size: 32,
-                                  ),
-                                  onPressed: () => editProfile(context, user),
-                                ),
-                              ),
-                            ),
                           ],
                         );
                     }
                   }),
+           floatingActionButton: FloatingActionButton(
+            onPressed:  () => editProfile(context, user),
+            backgroundColor: Constants.primaryColorDark,
+            heroTag: 'editUserProfileFAB',
+            child: Icon(Icons.edit, color: Colors.white,),
+           ),
             );
         });
   }
