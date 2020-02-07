@@ -1,5 +1,3 @@
-# bored
-
 Msap.
 
 ## Getting Started
